@@ -1,12 +1,12 @@
 {
-	"name": "bastion-siege-clone",
+	"name": "mystily-telegram-game",
 	"private": true,
-	"version": "2.1.2",
+	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "EdJoPaTo/bastion-siege-clone",
+	"repository": "EdJoPaTo/mystily-telegram-game",
 	"author": {
 		"name": "EdJoPaTo",
-		"email": "bastion-siege-clone@edjopato.de",
+		"email": "mystily-telegram-game@edjopato.de",
 		"url": "https://EdJoPaTo.de"
 	},
 	"engines": {

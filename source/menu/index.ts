@@ -76,4 +76,4 @@ menu.submenu(buttonText(EMOJI.statistics, 'menu.statistics'), 'stats', statsMenu
 	joinLastRow: true
 })
 
-menu.url(buttonText(EMOJI.chat, 'menu.chat'), 'https://t.me/Bs1thApril')
+menu.url(buttonText(EMOJI.chat, 'menu.chat'), 'https://t.me/Mystily')

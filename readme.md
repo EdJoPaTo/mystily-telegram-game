@@ -1,2 +1,2 @@
-# TODO
-[![Build Status](https://travis-ci.com/EdJoPaTo/bastion-siege-clone.svg?branch=master)](https://travis-ci.com/EdJoPaTo/bastion-siege-clone)
+# Mystily - A Telegram Bot Game
+[![Build Status](https://travis-ci.com/EdJoPaTo/mystily-telegram-game.svg?branch=master)](https://travis-ci.com/EdJoPaTo/mystily-telegram-game)
