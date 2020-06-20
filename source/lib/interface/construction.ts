@@ -33,7 +33,7 @@ export async function constructionPropertyString(ctx: Context, buildings: Buildi
 
 	if (building === 'wall') {
 		const archerBonus = calcWallArcherBonus(buildings.wall)
-		const readerArcher = await ctx.wd.reader('units.archer')
+		const readerArcher = await ctx.wd.reader('army.archer')
 		return readerArcher.label() + ' ' + formatBonusPercentage(archerBonus) + EMOJI.health
 	}
 

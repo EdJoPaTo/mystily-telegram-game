@@ -46,6 +46,7 @@ name:
 army:
   archer: Q890527
   army: Q37726
+  cleric: Q2259532
   swordfighter: Q11397897
   villager: Q22947
 unit:
