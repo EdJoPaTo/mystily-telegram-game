@@ -51,6 +51,13 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 	}
 }
 
-export function calcStorageCapacity(currentLevel: number): number {
-	return (currentLevel + 1) * 1000
+export function calcStorageCapacity(currentLevel: number): Resources {
+	const factor = (currentLevel + 1) * 1000
+	return {
+		food: factor,
+		wood: factor * 0.8,
+		loam: factor * 0.8,
+		stone: factor * 0.5,
+		iron: factor * 0.2
+	}
 }

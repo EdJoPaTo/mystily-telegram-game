@@ -19,3 +19,11 @@ export function joinTwoRecords<Key extends string, Value, Result>(func: (a: Valu
 
 	return result
 }
+
+export function ensureBetweenFinite(min: number, max: number, value: number): number {
+	if (Number.isNaN(value)) {
+		return min
+	}
+
+	return Math.max(min, Math.min(max, value))
+}

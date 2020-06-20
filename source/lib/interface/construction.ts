@@ -1,10 +1,10 @@
 import {Building, Buildings, calcStorageCapacity, calcWallArcherBonus} from '../model'
 import {Context} from '../context'
 
+import {currentResourcesPart} from './resource'
 import {EMOJI, possibleEmoji} from './emoji'
-import {formatNumberShort, formatBonusPercentage} from './format-number'
+import {formatBonusPercentage} from './format-number'
 import {wikidataInfoHeader} from './generals'
-import { currentResourcesPart } from './resource'
 
 export async function constructionLine(ctx: Context, construction: Building, level: number, canUpgrade: boolean): Promise<string> {
 	const reader = await ctx.wd.reader(`construction.${construction}`)
@@ -27,14 +27,8 @@ export async function infoHeader(ctx: Context, building: Building, currentLevel:
 
 export async function constructionPropertyString(ctx: Context, buildings: Buildings, building: Building): Promise<string | undefined> {
 	if (building === 'storage') {
-		const readerCapacity = await ctx.wd.reader('other.storageCapacity')
 		const storageCapacity = calcStorageCapacity(buildings.storage)
-
-		let text = ''
-		text += readerCapacity.label() + ': ' + formatNumberShort(storageCapacity, true)
-		text += '\n\n'
-		text += await currentResourcesPart(ctx, ctx.session.resources, storageCapacity)
-		return text
+		return currentResourcesPart(ctx, ctx.session.resources, storageCapacity)
 	}
 
 	if (building === 'wall') {

@@ -33,7 +33,7 @@ export async function costResourceLine(ctx: Context, resource: Resource, require
 
 export async function incomeResourceLine(ctx: Context, resource: Resource, amount: number): Promise<string> {
 	const reader = await ctx.wd.reader(`resource.${resource}`)
- 	const readerDay = await ctx.wd.reader('unit.day')
+	const readerDay = await ctx.wd.reader('unit.day')
 	const parts: string[] = []
 
 	parts.push(EMOJI[resource])
@@ -46,9 +46,9 @@ export async function incomeResourceLine(ctx: Context, resource: Resource, amoun
 	return parts.join(' ')
 }
 
-export async function currentResourcesPart(ctx: Context, resources: Resources, storageCapacity: number): Promise<string> {
+export async function currentResourcesPart(ctx: Context, resources: Resources, storageCapacity: Resources): Promise<string> {
 	const lines = await Promise.all(RESOURCES
-		.map(async o => currentResourceLine(ctx, o, resources[o], storageCapacity))
+		.map(async o => currentResourceLine(ctx, o, resources[o], storageCapacity[o]))
 	)
 
 	return lines.join('\n')

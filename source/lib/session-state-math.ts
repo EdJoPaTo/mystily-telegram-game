@@ -1,5 +1,6 @@
-import {Context, Session} from './context'
 import {calcResourceIncomeFromBuilding, BUILDINGS, calcStorageCapacity, STARTING_RESOURCES, ZERO_BUILDINGS, ZERO_UNITS} from './model'
+import {Context, Session} from './context'
+import {ensureBetweenFinite} from './js-helper'
 import {MINUTE} from './unix-time'
 import * as resourceMath from './model/resource-math'
 
@@ -41,7 +42,7 @@ function calcCurrentResources(session: Session, now: number): void {
 
 		const storageCapacity = calcStorageCapacity(session.buildings.storage)
 		session.resources = resourceMath.apply(
-			o => Math.max(0, Math.min(storageCapacity, Math.round(o))),
+			(amount, resource) => ensureBetweenFinite(0, storageCapacity[resource], Math.round(amount)),
 			withIncome
 		)
 		session.resourcesTimestamp = now
