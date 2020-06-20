@@ -35,8 +35,10 @@ const i18n = new TelegrafI18n({
 
 bot.use(i18n.middleware())
 
-const twb = new TelegrafWikibase(new Map(), {
-	contextKey: 'wd'
+const twb = new TelegrafWikibase({
+	contextKey: 'wd',
+	logQueriedEntityIds: process.env.NODE_ENV !== 'production',
+	userAgent: 'EdJoPaTo/mystily-telegram-game'
 })
 
 const wikidataResourceKeyYaml = readFileSync('wikidata-items.yaml', 'utf8')
