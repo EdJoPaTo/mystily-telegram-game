@@ -26,8 +26,6 @@ export async function build(): Promise<void> {
 			.map(async key => loadQNumbersOfKey(key as Query))
 	)
 
-	const qNumbers = Object.values(entities).flat()
-	console.timeLog('wikidata-sets', 'preloadQNumbers', qNumbers.length)
 	console.timeEnd('wikidata-sets')
 }
 
