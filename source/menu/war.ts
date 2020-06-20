@@ -1,7 +1,7 @@
 import {Extra} from 'telegraf'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Buildings, calcArmyFromPlayerUnits, PLAYER_UNIT_ARMY_TYPES, ZERO_UNITS} from '../lib/model'
+import {calcArmyFromPlayerUnits, PLAYER_UNIT_ARMY_TYPES, ZERO_UNITS, PLAYER_ATTACKING_UNITS} from '../lib/model'
 import {Context, Name} from '../lib/context'
 import * as userSessions from '../lib/user-sessions'
 
@@ -11,10 +11,6 @@ import {EMOJI} from '../lib/interface/emoji'
 import {formatNamePlain} from '../lib/interface/name'
 import {formatNumberShort} from '../lib/interface/format-number'
 import {wikidataInfoHeader} from '../lib/interface/generals'
-
-function getLoot(_constructions: Buildings): number {
-	return 42
-}
 
 function afterBattleMessageText(attack: boolean, win: boolean, name: Name): string {
 	const lines: string[] = []
@@ -32,22 +28,29 @@ function afterBattleMessageText(attack: boolean, win: boolean, name: Name): stri
 }
 
 async function menuBody(ctx: Context): Promise<Body> {
-	const attackTargetId = ctx.session.attackTarget
-	const attackTarget = attackTargetId && userSessions.getUser(attackTargetId)
-
 	let text = ''
 	text += wikidataInfoHeader(await ctx.wd.reader('menu.war'), {titlePrefix: EMOJI.war})
 	text += '\n\n'
 
-	// eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-	if (attackTarget && attackTarget.name) {
-		const {name, buildings} = attackTarget
-		text += (await ctx.wd.reader('battle.target')).label()
+	for (const unit of PLAYER_ATTACKING_UNITS) {
+		// eslint-disable-next-line no-await-in-loop
+		text += (await ctx.wd.reader(`army.${unit}`)).label()
+		text += ': '
+		text += formatNumberShort(ctx.session.units[unit], true)
+		text += EMOJI[unit]
 		text += '\n'
-		text += formatNamePlain(name)
-		text += '\n'
-		text += `~${formatNumberShort(getLoot(buildings), true)}${EMOJI.wall}\n`
-		text += '\n\n'
+	}
+
+	text += '\n'
+
+	if (ctx.session.attackTarget) {
+		const attackTarget = userSessions.getUser(ctx.session.attackTarget)
+		if (attackTarget?.name) {
+			text += (await ctx.wd.reader('battle.target')).label()
+			text += '\n'
+			text += formatNamePlain(attackTarget.name)
+			text += '\n\n'
+		}
 	}
 
 	return {text, parse_mode: 'Markdown'}
@@ -56,7 +59,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 export const menu = new MenuTemplate(menuBody)
 
 menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')).label()}`, 'attack', {
-	hide: ctx => !ctx.session.attackTarget,
+	hide: ctx => !ctx.session.attackTarget || PLAYER_ATTACKING_UNITS.every(type => ctx.session.units[type] === 0),
 	do: async ctx => {
 		const now = Date.now() / 1000
 
