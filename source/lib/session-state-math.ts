@@ -1,0 +1,60 @@
+import {Context, Session} from './context'
+import {calcResourceIncomeFromBuilding, BUILDINGS, calcStorageCapacity, STARTING_RESOURCES, ZERO_BUILDINGS, ZERO_UNITS} from './model'
+import {MINUTE} from './unix-time'
+import * as resourceMath from './model/resource-math'
+
+const PER_MINUTE = 1 / MINUTE
+
+function foodPenalty(session: Session): number {
+	return session.resources.food > 0 ? 1 : 0.2
+}
+
+function initWhenMissing(session: Session, now: number): void {
+	if (!session.buildings) {
+		session.buildings = {...ZERO_BUILDINGS}
+	}
+
+	if (!session.resources || !session.resourcesTimestamp) {
+		session.resourcesTimestamp = now
+		session.resources = {...STARTING_RESOURCES}
+	}
+
+	if (!session.units) {
+		session.units = {...ZERO_UNITS}
+	}
+}
+
+function calcCurrentResources(session: Session, now: number): void {
+	const totalSeconds = now - session.resourcesTimestamp
+	const totalMinutes = Math.floor(PER_MINUTE * foodPenalty(session) * totalSeconds)
+
+	if (totalMinutes > 0) {
+		const incomePerMinute = resourceMath.sum(
+			...BUILDINGS.map(building => calcResourceIncomeFromBuilding(building, session.buildings[building]))
+		)
+		const totalIncome = resourceMath.multiply(incomePerMinute, totalMinutes)
+
+		const withIncome = resourceMath.sum(
+			session.resources,
+			totalIncome
+		)
+
+		const storageCapacity = calcStorageCapacity(session.buildings.storage)
+		session.resources = resourceMath.apply(
+			o => Math.max(0, Math.min(storageCapacity, Math.round(o))),
+			withIncome
+		)
+		session.resourcesTimestamp = now
+	}
+}
+
+export function middleware(): (ctx: Context, next: () => Promise<void>) => Promise<void> {
+	return async (ctx, next) => {
+		const now = Date.now() / 1000
+
+		initWhenMissing(ctx.session, now)
+		calcCurrentResources(ctx.session, now)
+
+		return next()
+	}
+}

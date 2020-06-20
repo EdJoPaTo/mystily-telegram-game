@@ -1,0 +1,56 @@
+{
+	"name": "bastion-siege-clone",
+	"private": true,
+	"version": "2.1.2",
+	"license": "MIT",
+	"repository": "EdJoPaTo/bastion-siege-clone",
+	"author": {
+		"name": "EdJoPaTo",
+		"email": "bastion-siege-clone@edjopato.de",
+		"url": "https://EdJoPaTo.de"
+	},
+	"engines": {
+		"node": ">=14"
+	},
+	"scripts": {
+		"build": "del dist && tsc",
+		"prepack": "npm run build",
+		"start": "ts-node source/index.ts",
+		"test": "tsc --sourceMap && xo"
+	},
+	"main": "dist",
+	"types": "dist",
+	"files": [
+		"dist",
+		"!*.test.*"
+	],
+	"dependencies": {
+		"array-filter-unique": "^2.1.0",
+		"locale-emoji": "^0.3.0",
+		"random-item": "^3.0.0",
+		"source-map-support": "^0.5.12",
+		"telegraf": "^3.38.0",
+		"telegraf-i18n": "^6.5.0",
+		"telegraf-inline-menu": "5.0.0-beta.8",
+		"telegraf-session-local": "^1.0.3",
+		"telegraf-wikibase": "^0.5.0",
+		"wikidata-entity-reader": "^2.0.0",
+		"wikidata-sdk": "^7.4.3",
+		"wikidata-sdk-got": "^2.0.1"
+	},
+	"devDependencies": {
+		"@sindresorhus/tsconfig": "^0.7.0",
+		"@types/node": "^14.0.5",
+		"del-cli": "^3.0.1",
+		"ts-node": "^8.0.3",
+		"typescript": "^3.4.3",
+		"xo": "^0.32.0"
+	},
+	"xo": {
+		"semicolon": false,
+		"rules": {
+			"unicorn/no-reduce": "off",
+			"unicorn/no-fn-reference-in-iterator": "off"
+		}
+	}
+}

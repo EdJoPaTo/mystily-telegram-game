@@ -1,0 +1,27 @@
+menu:
+  back: zurück
+name:
+  take: Fantastisch! Das bin ich!
+  reject: Neee.
+  question:
+    full: Wie nennt man dich?
+    first: Was ist dein Vorname?
+    last: Was ist dein Familienname?
+  new:
+    first: Neuer Vorname
+    last: Neuer Familienname
+  info:
+    full: Andere Spieler werden dich unter deinem Namen wiedererkennen.
+    first: Du kannst deinen Vornamen alle 7 Tage ändern.
+    last: >
+      Du kannst entweder eine neue Familie gründen oder einer Familie beitreten.
+      Spieler mit dem selben Nachnamen halten zusammen.
+
+      Wenn du deine Familie nicht magst, kannst du sie einfach verlassen und eine neue suchen.
+      Du kannst deinen Familiennamen alle 22 Stunden ändern.
+disclaimer: >
+  Aktuell wird noch eine ganze Menge getestet und ausprobiert.
+
+  Das Spiel wandelt sich aktuell noch und dein Fortschritt wird vermutlich nochmal zurückgesetzt.
+
+  Und ich hätte gern mehr Feedback! :)
