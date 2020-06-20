@@ -1,8 +1,9 @@
 export type PlayerUnitArmyType = 'villager' | 'archer' | 'swordfighter' | 'cleric'
-export type ArmyType = PlayerUnitArmyType | 'mystic'
-export type WeaponType = 'sword' | 'bow' | 'mystic'
+export type ArmyType = PlayerUnitArmyType | 'mystical'
+export type WeaponType = 'melee' | 'ranged' | 'mystical'
 
 export const PLAYER_UNIT_ARMY_TYPES: readonly PlayerUnitArmyType[] = ['villager', 'archer', 'swordfighter', 'cleric']
+export const PLAYER_ATTACKING_UNITS: readonly PlayerUnitArmyType[] = ['archer', 'swordfighter']
 
 export type BlockChance = Readonly<Record<WeaponType, number>>
 
@@ -12,11 +13,11 @@ export interface Attack {
 }
 
 export const BLOCK_CHANCE: Readonly<Record<ArmyType, BlockChance>> = {
-	villager: {sword: 0.1, bow: 0.1, mystic: 0.05},
-	archer: {sword: 0.2, bow: 0.6, mystic: 0.1},
-	swordfighter: {sword: 0.5, bow: 0.2, mystic: 0.1},
-	cleric: {sword: 0.1, bow: 0.5, mystic: 0.95},
-	mystic: {sword: 0.8, bow: 0.8, mystic: 0.2}
+	villager: {melee: 0.1, ranged: 0.1, mystical: 0.05},
+	archer: {melee: 0.2, ranged: 0.6, mystical: 0.1},
+	swordfighter: {melee: 0.5, ranged: 0.2, mystical: 0.1},
+	cleric: {melee: 0.1, ranged: 0.5, mystical: 0.95},
+	mystical: {melee: 0.8, ranged: 0.8, mystical: 0.2}
 }
 
 export const BASE_HEALTH: Readonly<Record<ArmyType, number>> = {
@@ -24,15 +25,15 @@ export const BASE_HEALTH: Readonly<Record<ArmyType, number>> = {
 	archer: 20,
 	swordfighter: 40,
 	cleric: 20,
-	mystic: Number.NaN // Defined by each mystic individually
+	mystical: Number.NaN // Defined by each mystic individually
 }
 
 export const BASE_ATTACK: Readonly<Record<ArmyType, Attack>> = {
-	villager: {type: 'sword', strength: 3},
-	archer: {type: 'bow', strength: 15},
-	swordfighter: {type: 'sword', strength: 15},
-	cleric: {type: 'mystic', strength: 10},
-	mystic: {type: 'mystic', strength: 100}
+	villager: {type: 'melee', strength: 3},
+	archer: {type: 'ranged', strength: 15},
+	swordfighter: {type: 'melee', strength: 15},
+	cleric: {type: 'mystical', strength: 10},
+	mystical: {type: 'mystical', strength: 100}
 }
 
 export interface PlayerUnits {
@@ -76,22 +77,10 @@ function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
 export function calcArmyFromPlayerUnits(playerUnits: PlayerUnits, isAttacker: boolean, wallBonus: number): Army {
 	const result: UnitStats[] = []
 
-	if (!isAttacker) {
-		for (let i = 0; i < playerUnits.villager; i++) {
-			result.push(unitStatsFromType('villager', 1))
+	for (const type of isAttacker ? PLAYER_ATTACKING_UNITS : PLAYER_UNIT_ARMY_TYPES) {
+		for (let i = 0; i < playerUnits[type]; i++) {
+			result.push(unitStatsFromType(type, !isAttacker && type === 'archer' ? wallBonus : 1))
 		}
-
-		for (let i = 0; i < playerUnits.cleric; i++) {
-			result.push(unitStatsFromType('cleric', 1))
-		}
-	}
-
-	for (let i = 0; i < playerUnits.swordfighter; i++) {
-		result.push(unitStatsFromType('swordfighter', 1))
-	}
-
-	for (let i = 0; i < playerUnits.archer; i++) {
-		result.push(unitStatsFromType('archer', wallBonus))
 	}
 
 	return result
