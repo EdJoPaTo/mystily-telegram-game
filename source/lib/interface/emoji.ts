@@ -33,8 +33,8 @@ export const EMOJI = {
 	archer: '🏹',
 	swordfighter: '🗡',
 	villager: '🪕',
-
-	dragon: '🐲',
+	cleric: '📿',
+	mystical: '🐲',
 
 	activeUser: '💙',
 	betrayal: '😈',

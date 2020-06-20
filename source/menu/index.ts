@@ -61,7 +61,7 @@ menu.submenu(buttonText(EMOJI.trade, 'menu.trade'), 'trade', tradeMenu, {
 	hide: ctx => !ctx.session.name || ctx.session.buildings.marketplace === 0
 })
 
-menu.submenu(buttonText(EMOJI.dragon, 'menu.mystical'), 'mystic', mysticsMenu, {
+menu.submenu(buttonText(EMOJI.mystical, 'menu.mystical'), 'mystic', mysticsMenu, {
 	hide: ctx => !ctx.session.name
 })
 
