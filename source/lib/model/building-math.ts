@@ -30,11 +30,11 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 	switch (building) {
 		case 'townhall':
 			return {
-				food: 1.7 ** currentLevel,
-				wood: 1.4 ** currentLevel,
-				loam: 1.4 ** currentLevel,
-				stone: 1.2 ** currentLevel,
-				iron: 1.1 ** currentLevel
+				food: 8 * currentLevel,
+				wood: 4 * currentLevel,
+				loam: 4 * currentLevel,
+				stone: 2 * currentLevel,
+				iron: currentLevel
 			}
 		case 'farm':
 			return {...ZERO_RESOURCES, food: currentLevel * 10}
@@ -52,12 +52,12 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 }
 
 export function calcStorageCapacity(currentLevel: number): Resources {
-	const factor = (currentLevel + 1) * 1000
+	const factor = (currentLevel + 1) * 800
 	return {
 		food: factor,
-		wood: factor * 0.8,
-		loam: factor * 0.8,
+		wood: factor * 0.75,
+		loam: factor * 0.75,
 		stone: factor * 0.5,
-		iron: factor * 0.2
+		iron: factor * 0.25
 	}
 }
