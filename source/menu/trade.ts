@@ -13,6 +13,8 @@ async function tradeMenuBody(ctx: Context): Promise<Body> {
 	text += wikidataInfoHeader(await ctx.wd.reader('action.buy'), {titlePrefix: EMOJI.trade})
 	text += '\n\n'
 	text += await currentResourcesPart(ctx, ctx.session.resources, calcStorageCapacity(ctx.session.buildings.storage))
+	text += '\n\n'
+	text += 'Lazy dev… Nothing here yet…'
 	return {text, parse_mode: 'Markdown'}
 }
 

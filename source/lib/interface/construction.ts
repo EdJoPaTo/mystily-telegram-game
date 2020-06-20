@@ -31,10 +31,22 @@ export async function constructionPropertyString(ctx: Context, buildings: Buildi
 		return currentResourcesPart(ctx, ctx.session.resources, storageCapacity)
 	}
 
+	if (building === 'marketplace') {
+		return 'Lazy dev… Nothing here yet…'
+	}
+
+	if (building === 'barracks') {
+		return 'Lazy dev… Nothing here yet…'
+	}
+
 	if (building === 'wall') {
 		const archerBonus = calcWallArcherBonus(buildings.wall)
 		const readerArcher = await ctx.wd.reader('army.archer')
 		return readerArcher.label() + ' ' + formatBonusPercentage(archerBonus) + EMOJI.health
+	}
+
+	if (building === 'placeOfWorship') {
+		return 'Lazy dev… Nothing here yet…'
 	}
 
 	return undefined
