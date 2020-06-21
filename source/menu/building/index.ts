@@ -11,6 +11,7 @@ import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 import {menu as barracksMenu} from './barracks'
 import {menu as entryMenu} from './generic-building'
+import {menu as placeOfWorshipMenu} from './place-of-worship'
 
 function canUpgrade(buildings: Buildings, building: Building, currentResources: Resources): boolean {
 	const cost = calcBuildingCost(building, buildings[building])
@@ -56,6 +57,6 @@ menu.submenu(wdButtonText(EMOJI.farm, 'construction.farm'), 'farm', entryMenu)
 menu.submenu(wdButtonText(EMOJI.barracks, 'construction.barracks'), 'barracks', barracksMenu)
 menu.submenu(wdButtonText(EMOJI.wall, 'construction.wall'), 'wall', entryMenu, {joinLastRow: true})
 
-menu.submenu(wdButtonText(EMOJI.placeOfWorship, 'construction.placeOfWorship'), 'placeOfWorship', entryMenu)
+menu.submenu(wdButtonText(EMOJI.placeOfWorship, 'construction.placeOfWorship'), 'placeOfWorship', placeOfWorshipMenu)
 
 menu.manualRow(backButtons)

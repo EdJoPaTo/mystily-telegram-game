@@ -1,12 +1,12 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcBuildingCost, calcBarracksMaxPeople, calcArmyUnitSum, PLAYER_ATTACKING_UNITS, PlayerUnitArmyType, UNIT_COST} from '../../lib/model'
+import {calcBuildingCost, calcBarracksMaxPeople, calcArmyUnitSum, UNIT_COST} from '../../lib/model'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 
 import {backButtons} from '../../lib/interface/menu'
 import {EMOJI} from '../../lib/interface/emoji'
-import {generateUnitDetailsAndCostPart, recruitButtonText} from '../../lib/interface/army'
+import {recruitButtonText, generateUnitDetailsAndCostPart} from '../../lib/interface/army'
 import {infoHeader} from '../../lib/interface/construction'
 import {upgradeResourcesPart} from '../../lib/interface/resource'
 
@@ -18,17 +18,15 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	const {level} = constructionFromCtx(ctx, path)
 
 	const textParts: string[] = []
-	textParts.push(await infoHeader(ctx, 'barracks', level))
+	textParts.push(await infoHeader(ctx, 'placeOfWorship', level))
 
 	const currentAmount = calcArmyUnitSum(ctx.session.units)
 	const maxAmount = calcBarracksMaxPeople(ctx.session.buildings.barracks)
 	textParts.push(`${currentAmount}${EMOJI.army} / ${maxAmount}${EMOJI.army}`)
 
-	textParts.push(...await Promise.all(
-		PLAYER_ATTACKING_UNITS.map(async o => generateUnitDetailsAndCostPart(ctx, o))
-	))
+	textParts.push(await generateUnitDetailsAndCostPart(ctx, 'cleric'))
 
-	const requiredResources = calcBuildingCost('barracks', level)
+	const requiredResources = calcBuildingCost('placeOfWorship', level)
 	const currentResources = ctx.session.resources
 	textParts.push(await upgradeResourcesPart(ctx, requiredResources, currentResources))
 
@@ -37,17 +35,14 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	return {text, parse_mode: 'Markdown'}
 }
 
-menu.choose('recruit', canRecruitOptions, {
-	columns: 1,
-	hide: ctx => calcArmyUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
-	buttonText: async (ctx, key) => recruitButtonText(ctx, key as PlayerUnitArmyType),
-	do: (ctx, key) => {
-		const armyType = key as PlayerUnitArmyType
-		ctx.session.resources = resourceMath.subtract(ctx.session.resources, UNIT_COST[armyType])
+menu.interact(async ctx => recruitButtonText(ctx, 'cleric'), 'recruit', {
+	hide: ctx => !canRecruit(ctx),
+	do: ctx => {
+		ctx.session.resources = resourceMath.subtract(ctx.session.resources, UNIT_COST.cleric)
 
 		ctx.session.units = {
 			...ctx.session.units,
-			[armyType]: ctx.session.units[armyType] + 1
+			cleric: ctx.session.units.cleric + 1
 		}
 
 		return '.'
@@ -57,23 +52,21 @@ menu.choose('recruit', canRecruitOptions, {
 addUpgradeButton(menu)
 
 menu.url(async ctx => `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label()}`, async ctx => {
-	const wdKey = 'construction.barracks'
+	const wdKey = 'construction.placeOfWorship'
 	const reader = await ctx.wd.reader(wdKey)
 	return reader.url()
 })
 
 menu.manualRow(backButtons)
 
-async function canRecruitOptions(ctx: Context): Promise<readonly string[]> {
-	const canBeRecruited: string[] = []
-	const currentResources = ctx.session.resources
-
-	for (const armyType of PLAYER_ATTACKING_UNITS) {
-		const cost = UNIT_COST[armyType]
-		if (resourceMath.isEnough(currentResources, cost)) {
-			canBeRecruited.push(armyType)
-		}
+function canRecruit(ctx: Context): boolean {
+	if (calcArmyUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks)) {
+		return false
 	}
 
-	return canBeRecruited
+	if (ctx.session.units.cleric >= ctx.session.buildings.placeOfWorship) {
+		return false
+	}
+
+	return resourceMath.isEnough(ctx.session.resources, UNIT_COST.cleric)
 }

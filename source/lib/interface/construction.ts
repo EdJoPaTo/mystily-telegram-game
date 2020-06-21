@@ -46,7 +46,7 @@ export async function constructionPropertyString(ctx: Context, buildings: Buildi
 	}
 
 	if (building === 'placeOfWorship') {
-		return 'Lazy dev… Nothing here yet…'
+		throw new Error('has its own menu')
 	}
 
 	return undefined
