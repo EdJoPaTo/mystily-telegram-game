@@ -26,8 +26,13 @@ export function formatNumberShort(value: number, isInteger = false): string {
 	return (isNegative ? '-' : '') + valueString + letter
 }
 
+export function formatPercentage(percentage: number): string {
+	const hundred = percentage * 100
+	return hundred.toFixed(0) + '%'
+}
+
 export function formatBonusPercentage(bonusPercentage: number): string {
 	const bonus = (bonusPercentage - 1) * 100
 	const sign = bonus >= 0 ? '+' : ''
-	return sign + bonus.toFixed(1) + '%'
+	return sign + bonus.toFixed(0) + '%'
 }
