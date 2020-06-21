@@ -9,7 +9,7 @@ import {formatNamePlain} from '../lib/interface/name'
 import {currentResourcesPart, incomeResourcesPart} from '../lib/interface/resource'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
-import {menu as buildingsMenu} from './constructions'
+import {menu as buildingsMenu} from './building'
 import {menu as familyMenu} from './family'
 import {menu as languageMenu} from './languages'
 import {menu as mysticsMenu} from './mystic'

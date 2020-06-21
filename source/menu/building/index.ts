@@ -1,15 +1,15 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Buildings, Building, Resources, BUILDINGS, calcBuildingCost} from '../lib/model'
-import {isEnough} from '../lib/model/resource-math'
-import {Context} from '../lib/context'
+import {Buildings, Building, Resources, BUILDINGS, calcBuildingCost} from '../../lib/model'
+import {isEnough} from '../../lib/model/resource-math'
+import {Context} from '../../lib/context'
 
-import {backButtons, wdButtonText} from '../lib/interface/menu'
-import {constructionLine} from '../lib/interface/construction'
-import {EMOJI} from '../lib/interface/emoji'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {backButtons, wdButtonText} from '../../lib/interface/menu'
+import {constructionLine} from '../../lib/interface/construction'
+import {EMOJI} from '../../lib/interface/emoji'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
-import {menu as entryMenu} from './construction'
+import {menu as entryMenu} from './generic-building'
 
 function canUpgrade(buildings: Buildings, building: Building, currentResources: Resources): boolean {
 	const cost = calcBuildingCost(building, buildings[building])
