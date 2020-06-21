@@ -12,7 +12,7 @@ export function determineBattleResult(attacker: Army, defender: Army): BattleRes
 	const defenderSane = defender.filter(o => o.remainingHealth > 0)
 
 	return {
-		attackerWins: attackerSane.length > defenderSane.length,
+		attackerWins: defenderSane.length === 0,
 		attackerArmyRemaining: remainingPlayerUnits(attackerSane),
 		defenderArmyRemaining: remainingPlayerUnits(defenderSane)
 	}
