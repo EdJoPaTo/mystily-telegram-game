@@ -1,0 +1,29 @@
+import {Context} from '../context'
+import {EMOJI} from './emoji'
+import {formatPercentage} from './format-number'
+import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES} from '../model'
+import {wikidataInfoHeader} from './generals'
+
+export async function generateUnitDetailsPart(ctx: Context, armyType: PlayerUnitArmyType, amount: number): Promise<string> {
+	const reader = await ctx.wd.reader(`army.${armyType}`)
+	const attack = BASE_ATTACK[armyType]
+	const block = BLOCK_CHANCE[armyType]
+	const health = BASE_HEALTH[armyType]
+
+	let text = ''
+	text += wikidataInfoHeader(reader, {titlePrefix: `${amount}x ${EMOJI[armyType]}`})
+
+	text += '\n'
+	text +=	attack.strength
+	text += EMOJI[attack.type]
+	text += '  '
+	text += health
+	text += EMOJI.health
+
+	text += '\n'
+	text += WEAPON_TYPES
+		.map(o => `${formatPercentage(block[o])}${EMOJI.defence}${EMOJI[o]}`)
+		.join('  ')
+
+	return text
+}

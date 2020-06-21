@@ -61,3 +61,7 @@ export function calcStorageCapacity(currentLevel: number): Resources {
 		iron: factor * 200
 	}
 }
+
+export function calcBarracksMaxPeople(currentLevel: number): number {
+	return currentLevel * 8
+}

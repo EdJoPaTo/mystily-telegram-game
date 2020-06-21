@@ -9,6 +9,7 @@ import {constructionLine} from '../../lib/interface/construction'
 import {EMOJI} from '../../lib/interface/emoji'
 import {wikidataInfoHeader} from '../../lib/interface/generals'
 
+import {menu as barracksMenu} from './barracks'
 import {menu as entryMenu} from './generic-building'
 
 function canUpgrade(buildings: Buildings, building: Building, currentResources: Resources): boolean {
@@ -52,7 +53,7 @@ menu.chooseIntoSubmenu('', ['sawmill', 'loampit', 'quarry', 'mine'], entryMenu, 
 
 menu.submenu(wdButtonText(EMOJI.farm, 'construction.farm'), 'farm', entryMenu)
 
-menu.submenu(wdButtonText(EMOJI.barracks, 'construction.barracks'), 'barracks', entryMenu)
+menu.submenu(wdButtonText(EMOJI.barracks, 'construction.barracks'), 'barracks', barracksMenu)
 menu.submenu(wdButtonText(EMOJI.wall, 'construction.wall'), 'wall', entryMenu, {joinLastRow: true})
 
 menu.submenu(wdButtonText(EMOJI.placeOfWorship, 'construction.placeOfWorship'), 'placeOfWorship', entryMenu)

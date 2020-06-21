@@ -36,7 +36,7 @@ export async function constructionPropertyString(ctx: Context, buildings: Buildi
 	}
 
 	if (building === 'barracks') {
-		return 'Lazy dev… Nothing here yet…'
+		throw new Error('has its own menu')
 	}
 
 	if (building === 'wall') {

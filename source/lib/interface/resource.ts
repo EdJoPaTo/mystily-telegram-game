@@ -54,6 +54,15 @@ export async function currentResourcesPart(ctx: Context, resources: Resources, s
 	return lines.join('\n')
 }
 
+export async function costResourcesPart(ctx: Context, required: Resources, available: Resources): Promise<string> {
+	const lines = await Promise.all(RESOURCES
+		.filter(o => required[o] > 0)
+		.map(async o => costResourceLine(ctx, o, required[o], available[o]))
+	)
+
+	return lines.join('\n')
+}
+
 export async function upgradeResourcesPart(ctx: Context, required: Resources, available: Resources): Promise<string> {
 	const labelReader = await ctx.wd.reader('action.upgrade')
 	const lines = await Promise.all(RESOURCES

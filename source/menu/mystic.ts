@@ -14,7 +14,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const images = reader.images(800)
 
 	let text = ''
-	text += wikidataInfoHeader(await ctx.wd.reader('menu.mystical'), {titlePrefix: EMOJI.mystical})
+	text += wikidataInfoHeader(await ctx.wd.reader('menu.mystical'), {titlePrefix: EMOJI.mystic})
 	text += '\n\n'
 	text += wikidataInfoHeader(reader)
 	text += '\n\n'

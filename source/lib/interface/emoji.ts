@@ -7,7 +7,6 @@ export const EMOJI = {
 	attack: '⚔',
 	defence: '🛡',
 	trade: '🎪',
-	castle: '🏰',
 
 	food: '🥕',
 	wood: '🌲',
@@ -34,7 +33,11 @@ export const EMOJI = {
 	swordfighter: '🗡',
 	villager: '🪕',
 	cleric: '📿',
-	mystical: '🐲',
+	mystic: '🐲',
+
+	melee: '✊',
+	ranged: '🎯',
+	mystical: '🌈',
 
 	activeUser: '💙',
 	betrayal: '😈',
@@ -47,6 +50,7 @@ export const EMOJI = {
 	nameFallback: '🔮',
 	possibleNo: '⛔️',
 	possibleYes: '✅',
+	recruit: '🎽',
 	statistics: '📊',
 	suicide: '😵',
 	win: '🎉',
