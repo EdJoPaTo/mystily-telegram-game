@@ -4,7 +4,7 @@ import {Resources, ZERO_RESOURCES} from './resources'
 const FACTORS: Readonly<Record<Building, Resources>> = {
 	townhall: {food: 800, wood: 800, loam: 800, stone: 400, iron: 100},
 	marketplace: {food: 500, wood: 500, loam: 200, stone: 100, iron: 20},
-	storage: {food: 200, wood: 800, loam: 800, stone: 400, iron: 80},
+	storage: {food: 300, wood: 550, loam: 550, stone: 350, iron: 150},
 	sawmill: {food: 20, wood: 5, loam: 15, stone: 1, iron: 1},
 	loampit: {food: 20, wood: 15, loam: 5, stone: 1, iron: 1},
 	quarry: {food: 20, wood: 15, loam: 5, stone: 3, iron: 3},
@@ -52,12 +52,12 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 }
 
 export function calcStorageCapacity(currentLevel: number): Resources {
-	const factor = (currentLevel + 1) * 800
+	const factor = currentLevel + 1
 	return {
-		food: factor,
-		wood: factor * 0.75,
-		loam: factor * 0.75,
-		stone: factor * 0.5,
-		iron: factor * 0.25
+		food: factor * 800,
+		wood: factor * 600,
+		loam: factor * 600,
+		stone: factor * 400,
+		iron: factor * 200
 	}
 }
