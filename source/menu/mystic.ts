@@ -5,11 +5,10 @@ import {getCurrentMystical} from '../mystics-attacking'
 
 import {backButtons} from '../lib/interface/menu'
 import {EMOJI} from '../lib/interface/emoji'
-import {formatNumberShort} from '../lib/interface/format-number'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
 async function menuBody(ctx: Context): Promise<Body> {
-	const {qNumber, current, max, gold} = getCurrentMystical()
+	const {qNumber, current, max} = getCurrentMystical()
 	const reader = await ctx.wd.reader(qNumber)
 	const images = reader.images(800)
 
@@ -24,10 +23,6 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += ' / '
 	text += Math.round(max)
 	text += EMOJI.health
-
-	text += '\n'
-	text += formatNumberShort(gold, true)
-	// Text += EMOJI.gold
 
 	return {text, parse_mode: 'Markdown', media: images[0], type: 'photo'}
 }

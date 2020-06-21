@@ -21,7 +21,7 @@ export const BLOCK_CHANCE: Readonly<Record<ArmyType, BlockChance>> = {
 	archer: {melee: 0.2, ranged: 0.6, mystical: 0.1},
 	swordfighter: {melee: 0.5, ranged: 0.2, mystical: 0.1},
 	cleric: {melee: 0.1, ranged: 0.5, mystical: 0.95},
-	mystic: {melee: 0.8, ranged: 0.8, mystical: 0.2}
+	mystic: {melee: 0.8, ranged: 0.8, mystical: 0.1}
 }
 
 export const BASE_HEALTH: Readonly<Record<ArmyType, number>> = {
@@ -36,7 +36,7 @@ export const BASE_ATTACK: Readonly<Record<ArmyType, Attack>> = {
 	villager: {type: 'melee', strength: 3},
 	archer: {type: 'ranged', strength: 15},
 	swordfighter: {type: 'melee', strength: 15},
-	cleric: {type: 'mystical', strength: 10},
+	cleric: {type: 'mystical', strength: 30},
 	mystic: {type: 'mystical', strength: 100}
 }
 
@@ -50,10 +50,10 @@ export const UNIT_COST: Readonly<Record<PlayerUnitArmyType, Resources>> = {
 export type PlayerUnits = Readonly<Record<PlayerUnitArmyType, number>>
 
 export const ZERO_UNITS: PlayerUnits = {
-	villager: 0,
 	archer: 0,
+	cleric: 0,
 	swordfighter: 0,
-	cleric: 0
+	villager: 0
 }
 
 export interface UnitStats {
