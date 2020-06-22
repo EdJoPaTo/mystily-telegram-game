@@ -1,5 +1,5 @@
-import {Extra, Telegram} from 'telegraf'
 import {TelegrafWikibase} from 'telegraf-wikibase'
+import {Telegram} from 'telegraf'
 
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
 import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel} from './lib/model'
@@ -45,9 +45,10 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 
 	try {
 		const now = Date.now() / 1000
-		const {qNumber, max} = getCurrentMystical()
-
 		const languageCode = session.__wikibase_language_code ?? 'en'
+
+		const {qNumber, max} = getCurrentMystical()
+		const readerMystic = await twb.reader(qNumber, languageCode)
 
 		const playerArmy = calcArmyFromPlayerUnits(session.units, false, calcWallArcherBonus(session.buildings.wall))
 		const mysticArmy = getMysticAsArmy(currentHealth, session.buildings.barracks + session.buildings.placeOfWorship)
@@ -71,7 +72,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		})
 
 		text += '\n\n'
-		text += wikidataInfoHeader(await twb.reader(qNumber, languageCode), {
+		text += wikidataInfoHeader(readerMystic, {
 			titlePrefix: mysticStillAlive ? EMOJI.win : EMOJI.lose
 		})
 
@@ -94,7 +95,11 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 			}
 		}
 
-		await telegram.sendMessage(user, text, Extra.markdown() as any)
+		const photo = readerMystic.images(800)[0]
+		await telegram.sendPhoto(user, photo, {
+			caption: text,
+			parse_mode: 'Markdown'
+		})
 	} catch (error) {
 		session.blocked = true
 		console.log('mystics attack error', user, error.message)
