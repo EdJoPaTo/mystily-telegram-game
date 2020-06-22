@@ -1,12 +1,14 @@
 import {Extra, Telegram} from 'telegraf'
 import {TelegrafWikibase} from 'telegraf-wikibase'
 
-import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES} from './lib/model'
+import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel} from './lib/model'
 import {EMOJI} from './lib/interface/emoji'
 import {wikidataInfoHeader} from './lib/interface/generals'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
+
+const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
 const ATTACK_INTERVAL = 1000 * 60 * 30 // 30 Minutes
 let currentMysticQNumber: string | undefined
@@ -63,11 +65,6 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 			console.log('after mystics battle', user, max, currentHealth, session.units)
 		}
 
-		if (mysticStillAlive) {
-			session.resources = {...ZERO_RESOURCES}
-			session.resourcesTimestamp = now
-		}
-
 		let text = ''
 		text += wikidataInfoHeader(await twb.reader('construction.placeOfWorship', languageCode), {
 			titlePrefix: mysticStillAlive ? EMOJI.lose : EMOJI.win
@@ -77,7 +74,25 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		text += wikidataInfoHeader(await twb.reader(qNumber, languageCode), {
 			titlePrefix: mysticStillAlive ? EMOJI.win : EMOJI.lose
 		})
-		text += '\n'
+
+		if (mysticStillAlive) {
+			session.resources = {...ZERO_RESOURCES}
+			session.resourcesTimestamp = now
+
+			for (const targetBuilding of BUILDING_TARGETS) {
+				if (session.buildings[targetBuilding] > 0) {
+					text += '\n\n'
+					text += EMOJI.fire
+					text += EMOJI[targetBuilding]
+					text += ' -1 '
+					text += (await twb.reader(`construction.${targetBuilding}`, languageCode)).label()
+
+					session.buildings = changeBuildingLevel(session.buildings, targetBuilding, before => before - 1)
+
+					break
+				}
+			}
+		}
 
 		await telegram.sendMessage(user, text, Extra.markdown() as any)
 	} catch (error) {
