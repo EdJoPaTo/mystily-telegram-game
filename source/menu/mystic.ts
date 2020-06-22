@@ -8,7 +8,7 @@ import {EMOJI} from '../lib/interface/emoji'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
 async function menuBody(ctx: Context): Promise<Body> {
-	const {qNumber, current, max} = getCurrentMystical()
+	const {qNumber, remainingHealth, maxHealth} = await getCurrentMystical()
 	const reader = await ctx.wd.reader(qNumber)
 	const images = reader.images(800)
 
@@ -18,10 +18,10 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += wikidataInfoHeader(reader)
 	text += '\n\n'
 
-	text += Math.round(Math.max(1, current))
+	text += Math.round(Math.max(1, remainingHealth))
 	text += EMOJI.health
 	text += ' / '
-	text += Math.round(max)
+	text += Math.round(maxHealth)
 	text += EMOJI.health
 
 	return {text, parse_mode: 'Markdown', media: images[0], type: 'photo'}
@@ -35,10 +35,10 @@ menu.url(
 )
 
 menu.url(async ctx => {
-	const {qNumber} = getCurrentMystical()
+	const {qNumber} = await getCurrentMystical()
 	return `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label()} ${(await ctx.wd.reader(qNumber)).label()}`
 }, async ctx => {
-	const {qNumber} = getCurrentMystical()
+	const {qNumber} = await getCurrentMystical()
 	return (await ctx.wd.reader(qNumber)).url()
 })
 

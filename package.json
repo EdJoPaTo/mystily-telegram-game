@@ -25,6 +25,7 @@
 		"!*.test.*"
 	],
 	"dependencies": {
+		"@edjopato/datastore": "^0.3.2",
 		"array-filter-unique": "^2.1.0",
 		"locale-emoji": "^0.3.0",
 		"random-item": "^3.0.0",

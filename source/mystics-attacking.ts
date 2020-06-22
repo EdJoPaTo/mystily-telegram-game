@@ -1,8 +1,9 @@
+import {RawObjectInMemoryFile} from '@edjopato/datastore'
 import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
 
+import {calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum, Mystic, createMysticFromEntityId} from './lib/model'
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
-import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum} from './lib/model'
 import {EMOJI} from './lib/interface/emoji'
 import {HOUR, MINUTE} from './lib/unix-time'
 import {wikidataInfoHeader} from './lib/interface/generals'
@@ -13,8 +14,8 @@ const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'fa
 
 const ATTACK_INTERVAL = 30 * MINUTE
 const MAX_ATTACK_INTERVAL_PER_PLAYER = 18 * HOUR
-let currentMysticQNumber: string | undefined
-let currentHealth = 0
+
+const data = new RawObjectInMemoryFile<Mystic>('persist/mystic.json')
 
 let twb: TelegrafWikibase
 
@@ -24,22 +25,17 @@ export function start(telegram: Readonly<Telegram>, telegrafWikibase: TelegrafWi
 	setInterval(tryAttack, ATTACK_INTERVAL * 1000, telegram)
 }
 
-export function getCurrentMystical(): Readonly<{qNumber: string; current: number; max: number}> {
-	if (!currentMysticQNumber || currentHealth <= 0) {
-		// Reset Mystic
-		currentMysticQNumber = wdSets.getRandom('mystics')
-		if (!currentMysticQNumber) {
+export async function getCurrentMystical(): Promise<Readonly<Mystic>> {
+	if (!data.get()) {
+		const qNumber = wdSets.getRandom('mystics')
+		if (!qNumber) {
 			throw new Error('mystics not yet initialized')
 		}
 
-		currentHealth = calcMysticStrength(currentMysticQNumber)
+		await data.set(createMysticFromEntityId(qNumber))
 	}
 
-	return {
-		qNumber: currentMysticQNumber,
-		current: Math.round(currentHealth),
-		max: calcMysticStrength(currentMysticQNumber)
-	}
+	return data.get()!
 }
 
 async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
@@ -57,23 +53,30 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 	try {
 		const languageCode = session.__wikibase_language_code ?? 'en'
 
-		const {qNumber, max} = getCurrentMystical()
+		const currentMystic = await getCurrentMystical()
+		const {qNumber, maxHealth, remainingHealth} = currentMystic
 		const readerMystic = await twb.reader(qNumber, languageCode)
 
 		const playerArmy = calcArmyFromPlayerUnits(session.units, false, calcWallArcherBonus(session.buildings.wall))
-		const mysticArmy = getMysticAsArmy(currentHealth, session.buildings.barracks + session.buildings.placeOfWorship)
+		const mysticArmy = getMysticAsArmy(remainingHealth, session.buildings.barracks + session.buildings.placeOfWorship)
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('befor mystics battle', user, max, currentHealth, calcArmyUnitSum(session.units), session.units)
+			console.log('befor mystics battle', user, maxHealth, remainingHealth, calcArmyUnitSum(session.units), session.units)
 		}
 
 		calcBattle(mysticArmy, playerArmy)
 		session.units = remainingPlayerUnits(playerArmy)
-		currentHealth = mysticArmy.map(o => o.remainingHealth).reduce((a, b) => a + b, 0)
-		const mysticStillAlive = currentHealth > 0
+		const newRemainingHealth = mysticArmy.map(o => o.remainingHealth).reduce((a, b) => a + b, 0)
+		const mysticStillAlive = newRemainingHealth > 0
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('after mystics battle', user, max, currentHealth, calcArmyUnitSum(session.units), session.units)
+			console.log('after mystics battle', user, maxHealth, newRemainingHealth, calcArmyUnitSum(session.units), session.units)
+		}
+
+		if (mysticStillAlive) {
+			await data.set({...currentMystic, remainingHealth: newRemainingHealth})
+		} else {
+			data.delete()
 		}
 
 		let text = ''

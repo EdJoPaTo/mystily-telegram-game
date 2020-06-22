@@ -1,6 +1,23 @@
 import {Army, BASE_ATTACK, UnitStats} from './army'
 
-export function calcMysticStrength(mystic: string): number {
+type QNumber = string
+
+export interface Mystic {
+	readonly qNumber: QNumber;
+	readonly remainingHealth: number;
+	readonly maxHealth: number;
+}
+
+export function createMysticFromEntityId(mysticId: QNumber): Mystic {
+	const maxHealth = calcMysticStrength(mysticId)
+	return {
+		qNumber: mysticId,
+		maxHealth,
+		remainingHealth: maxHealth
+	}
+}
+
+function calcMysticStrength(mystic: QNumber): number {
 	const numbersOfQNumber = mystic
 		.split('')
 		.slice(1)
