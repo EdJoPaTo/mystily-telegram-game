@@ -83,11 +83,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		const attackerArmy = calcArmyFromPlayerUnits(attacker.units, true, 1)
 		const defenderArmy = calcArmyFromPlayerUnits(target.units, false, target.buildings.wall)
 
-		console.log('befor battle', attackerArmy, defenderArmy)
-
 		calcBattle(attackerArmy, defenderArmy)
-
-		console.log('after battle', attackerArmy, defenderArmy)
 
 		attacker.units = remainingPlayerUnits(attackerArmy)
 		target.units = remainingPlayerUnits(defenderArmy)
