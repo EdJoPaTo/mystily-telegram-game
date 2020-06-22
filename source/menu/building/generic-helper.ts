@@ -1,6 +1,6 @@
 import {MenuTemplate} from 'telegraf-inline-menu'
 
-import {Building, calcBuildingCost} from '../../lib/model'
+import {Building, calcBuildingCost, changeBuildingLevel} from '../../lib/model'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 
@@ -23,10 +23,7 @@ export function addUpgradeButton(menu: MenuTemplate<Context>): void {
 			const requiredResources = calcBuildingCost(building, level)
 
 			ctx.session.resources = resourceMath.subtract(ctx.session.resources, requiredResources)
-			ctx.session.buildings = {
-				...ctx.session.buildings,
-				[building]: level + 1
-			}
+			ctx.session.buildings = changeBuildingLevel(ctx.session.buildings, building, before => before + 1)
 
 			return '.'
 		}

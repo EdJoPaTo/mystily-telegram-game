@@ -107,3 +107,10 @@ export function calcStorageCapacity(currentLevel: number): Resources {
 export function calcBarracksMaxPeople(currentLevel: number): number {
 	return currentLevel * 8
 }
+
+export function changeBuildingLevel(buildings: Buildings, building: Building, change: (before: number) => number): Buildings {
+	return {
+		...buildings,
+		[building]: change(buildings[building])
+	}
+}
