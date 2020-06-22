@@ -1,10 +1,10 @@
-import randomItem from 'random-item'
+import {FEMALE, UNISEX, MALE} from 'wikidata-person-names'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
+import randomItem from 'random-item'
 
 import {Context, Name} from '../../lib/context'
 import {DAY, MINUTE} from '../../lib/unix-time'
 import {formatNamePlain} from '../../lib/interface/name'
-import {getGivenNames} from '../../lib/name-options'
 import {EMOJI} from '../../lib/interface/emoji'
 
 const CHANGE_EACH_SECONDS = DAY * 7
@@ -63,10 +63,32 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.interact(EMOJI.nameFallback, 'random', {
+menu.choose('random', ['female', 'unisex', 'male'], {
+	columns: 3,
 	hide: ctx => !canChangeFirstName(ctx.session.name),
-	do: ctx => {
-		ctx.session.createFirst = randomItem(getGivenNames())
+	buttonText: (_, key) => {
+		switch (key) {
+			case 'female':
+				return EMOJI.nameFemale
+			case 'male':
+				return EMOJI.nameMale
+			default:
+				return EMOJI.nameUnisex
+		}
+	},
+	do: (ctx, key) => {
+		switch (key) {
+			case 'female':
+				ctx.session.createFirst = randomItem(FEMALE)
+				break
+			case 'male':
+				ctx.session.createFirst = randomItem(MALE)
+				break
+			default:
+				ctx.session.createFirst = randomItem(UNISEX)
+				break
+		}
+
 		return '.'
 	}
 })
