@@ -50,7 +50,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const languageCode = session.__wikibase_language_code ?? 'en'
 
 		const playerArmy = calcArmyFromPlayerUnits(session.units, false, calcWallArcherBonus(session.buildings.wall))
-		const mysticArmy = getMysticAsArmy(currentHealth, session.buildings.placeOfWorship)
+		const mysticArmy = getMysticAsArmy(currentHealth, session.buildings.barracks + session.buildings.placeOfWorship)
 
 		if (process.env.NODE_ENV !== 'production') {
 			console.log('befor mystics battle', user, max, currentHealth, session.units)

@@ -7,11 +7,11 @@ export function calcMysticStrength(mystic: string): number {
 		.map(o => Number(o))
 
 	const baseStrength = numbersOfQNumber.reduce((a, b) => a + b, 0)
-	return baseStrength * 100
+	return baseStrength * 200
 }
 
-export function getMysticAsArmy(remainingHealth: number, playerPlaceOfWorshipLevel: number): Army {
-	const amount = Math.max(1, playerPlaceOfWorshipLevel * 3)
+export function getMysticAsArmy(remainingHealth: number, amountFactor: number): Army {
+	const amount = Math.max(1, amountFactor)
 
 	const per = Math.floor(remainingHealth / amount)
 	const leftover = remainingHealth - (per * amount)

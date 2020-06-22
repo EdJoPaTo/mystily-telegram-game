@@ -17,11 +17,11 @@ export interface Attack {
 }
 
 export const BLOCK_CHANCE: Readonly<Record<ArmyType, BlockChance>> = {
-	villager: {melee: 0.1, ranged: 0.1, mystical: 0.05},
+	villager: {melee: 0.1, ranged: 0.1, mystical: 0.35},
 	archer: {melee: 0.2, ranged: 0.6, mystical: 0.1},
 	swordfighter: {melee: 0.5, ranged: 0.2, mystical: 0.1},
 	cleric: {melee: 0.1, ranged: 0.5, mystical: 0.95},
-	mystic: {melee: 0.8, ranged: 0.8, mystical: 0.1}
+	mystic: {melee: 0.9, ranged: 0.9, mystical: 0.1}
 }
 
 export const BASE_HEALTH: Readonly<Record<ArmyType, number>> = {
