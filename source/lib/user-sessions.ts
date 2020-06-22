@@ -36,7 +36,7 @@ export function getUser(userId: number): Session | undefined {
 		.value()
 }
 
-export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => true): SessionRawEntry {
+export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => true): SessionRawEntry | undefined {
 	const rawArray = getRaw()
 		.filter(filter)
 	return randomItem(rawArray)

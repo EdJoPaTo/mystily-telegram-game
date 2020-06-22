@@ -15,6 +15,10 @@ function initWhenMissing(session: Session, now: number): void {
 		session.buildings = {...ZERO_BUILDINGS}
 	}
 
+	if (!session.lastMysticAttack) {
+		session.lastMysticAttack = now
+	}
+
 	if (!session.resources || !session.resourcesTimestamp) {
 		session.resourcesTimestamp = now
 		session.resources = {...STARTING_RESOURCES}

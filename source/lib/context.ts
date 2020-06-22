@@ -21,6 +21,7 @@ export interface Session {
 	buildings: Buildings;
 	createFirst?: string;
 	createLast?: string | false;
+	lastMysticAttack: UnixSeconds;
 	name?: Name;
 	page?: number;
 	resources: Resources;

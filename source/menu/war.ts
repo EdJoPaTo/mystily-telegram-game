@@ -122,7 +122,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 menu.interact(async ctx => `${EMOJI.search} ${(await ctx.wd.reader('action.search')).label()}`, 'search', {
 	do: ctx => {
 		const chosen = userSessions.getRandomUser(o => Boolean(o.data.name && o.user !== ctx.session.attackTarget))
-		ctx.session.attackTarget = chosen.user
+		ctx.session.attackTarget = chosen?.user
 		return '.'
 	}
 })

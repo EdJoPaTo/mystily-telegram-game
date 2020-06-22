@@ -4,13 +4,15 @@ import {Telegram} from 'telegraf'
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
 import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum} from './lib/model'
 import {EMOJI} from './lib/interface/emoji'
+import {HOUR, MINUTE} from './lib/unix-time'
 import {wikidataInfoHeader} from './lib/interface/generals'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
 
 const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
-const ATTACK_INTERVAL = 1000 * 60 * 30 // 30 Minutes
+const ATTACK_INTERVAL = 30 * MINUTE
+const MAX_ATTACK_INTERVAL_PER_PLAYER = 18 * HOUR
 let currentMysticQNumber: string | undefined
 let currentHealth = 0
 
@@ -19,7 +21,7 @@ let twb: TelegrafWikibase
 export function start(telegram: Readonly<Telegram>, telegrafWikibase: TelegrafWikibase): void {
 	twb = telegrafWikibase
 
-	setInterval(tryAttack, ATTACK_INTERVAL, telegram)
+	setInterval(tryAttack, ATTACK_INTERVAL * 1000, telegram)
 }
 
 export function getCurrentMystical(): Readonly<{qNumber: string; current: number; max: number}> {
@@ -41,10 +43,18 @@ export function getCurrentMystical(): Readonly<{qNumber: string; current: number
 }
 
 async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
-	const {user, data: session} = userSessions.getRandomUser(o => !o.data.blocked)
+	const now = Date.now() / 1000
+	const minTimestamp = now + MAX_ATTACK_INTERVAL_PER_PLAYER
+	const target = userSessions.getRandomUser(o => !o.data.blocked && o.data.lastMysticAttack > minTimestamp)
+
+	if (!target) {
+		// No suitable player found
+		return
+	}
+
+	const {user, data: session} = target
 
 	try {
-		const now = Date.now() / 1000
 		const languageCode = session.__wikibase_language_code ?? 'en'
 
 		const {qNumber, max} = getCurrentMystical()
