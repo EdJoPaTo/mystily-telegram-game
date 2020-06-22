@@ -44,7 +44,7 @@ export const UNIT_COST: Readonly<Record<PlayerUnitArmyType, Resources>> = {
 	villager: {food: 100, wood: 50, loam: 20, stone: 0, iron: 0},
 	archer: {food: 500, wood: 500, loam: 100, stone: 0, iron: 50},
 	swordfighter: {food: 1500, wood: 200, loam: 400, stone: 200, iron: 800},
-	cleric: {food: 1000, wood: 800, loam: 1400, stone: 400, iron: 200}
+	cleric: {food: 2000, wood: 800, loam: 1400, stone: 400, iron: 200}
 }
 
 export type PlayerUnits = Readonly<Record<PlayerUnitArmyType, number>>

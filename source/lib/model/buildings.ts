@@ -51,10 +51,10 @@ const FACTORS: Readonly<Record<Building, Resources>> = {
 	loampit: {food: 30, wood: 20, loam: 5, stone: 1, iron: 1},
 	quarry: {food: 30, wood: 20, loam: 5, stone: 3, iron: 3},
 	mine: {food: 30, wood: 30, loam: 30, stone: 15, iron: 5},
-	farm: {food: 10, wood: 10, loam: 10, stone: 1, iron: 1},
+	farm: {food: 0, wood: 10, loam: 10, stone: 1, iron: 1},
 	barracks: {food: 500, wood: 400, loam: 200, stone: 10, iron: 100},
 	wall: {food: 500, wood: 400, loam: 400, stone: 700, iron: 300},
-	placeOfWorship: {food: 1700, wood: 1700, loam: 1700, stone: 1000, iron: 800}
+	placeOfWorship: {food: 2000, wood: 1700, loam: 1700, stone: 1000, iron: 800}
 }
 
 export function calcBuildingCost(building: Building, currentLevel: number): Resources {
