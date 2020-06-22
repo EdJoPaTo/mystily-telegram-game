@@ -1,5 +1,5 @@
 import {Context} from '../context'
-import {costResourcesPart } from './resource'
+import {costResourcesPart} from './resource'
 import {EMOJI} from './emoji'
 import {formatPercentage} from './format-number'
 import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST} from '../model'

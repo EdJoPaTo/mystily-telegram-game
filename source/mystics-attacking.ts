@@ -86,6 +86,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 					text += EMOJI.fire
 					text += EMOJI[targetBuilding]
 					text += ' -1 '
+					// eslint-disable-next-line no-await-in-loop
 					text += (await twb.reader(`construction.${targetBuilding}`, languageCode)).label()
 
 					session.buildings = changeBuildingLevel(session.buildings, targetBuilding, before => before - 1)
