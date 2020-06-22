@@ -2,7 +2,7 @@ import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
 
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
-import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel} from './lib/model'
+import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum} from './lib/model'
 import {EMOJI} from './lib/interface/emoji'
 import {wikidataInfoHeader} from './lib/interface/generals'
 import * as userSessions from './lib/user-sessions'
@@ -54,7 +54,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const mysticArmy = getMysticAsArmy(currentHealth, session.buildings.barracks + session.buildings.placeOfWorship)
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('befor mystics battle', user, max, currentHealth, session.units)
+			console.log('befor mystics battle', user, max, currentHealth, calcArmyUnitSum(session.units), session.units)
 		}
 
 		calcBattle(mysticArmy, playerArmy)
@@ -63,7 +63,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const mysticStillAlive = currentHealth > 0
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('after mystics battle', user, max, currentHealth, session.units)
+			console.log('after mystics battle', user, max, currentHealth, calcArmyUnitSum(session.units), session.units)
 		}
 
 		let text = ''
