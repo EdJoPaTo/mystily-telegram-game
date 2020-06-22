@@ -71,12 +71,13 @@ export function calcBuildingCost(building: Building, currentLevel: number): Reso
 export function calcResourceIncomeFromBuilding(building: Building, currentLevel: number): Resources {
 	switch (building) {
 		case 'townhall':
+			const nextLevel = currentLevel + 1
 			return {
-				food: 8 * currentLevel,
-				wood: 4 * currentLevel,
-				loam: 4 * currentLevel,
-				stone: 2 * currentLevel,
-				iron: currentLevel
+				food: 8 * nextLevel,
+				wood: 4 * nextLevel,
+				loam: 4 * nextLevel,
+				stone: 2 * nextLevel,
+				iron: nextLevel
 			}
 		case 'farm':
 			return {...ZERO_RESOURCES, food: currentLevel * 10}
