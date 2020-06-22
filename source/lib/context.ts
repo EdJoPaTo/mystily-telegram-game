@@ -5,6 +5,7 @@ import {MiddlewareProperty} from 'telegraf-wikibase'
 import {Buildings, Resources, PlayerUnits} from './model'
 
 type UnixSeconds = number
+type UserId = number
 
 export interface Name {
 	readonly first: string;
@@ -15,7 +16,7 @@ export interface Name {
 
 export interface Session {
 	__wikibase_language_code?: string;
-	attackTarget?: number;
+	attackTarget?: UserId;
 	blocked?: boolean;
 	buildings: Buildings;
 	createFirst?: string;
@@ -23,7 +24,7 @@ export interface Session {
 	name?: Name;
 	page?: number;
 	resources: Resources;
-	resourcesTimestamp: number;
+	resourcesTimestamp: UnixSeconds;
 	selectedSpy: string;
 	selectedSpyEmoji: string;
 	units: PlayerUnits;
