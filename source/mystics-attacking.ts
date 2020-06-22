@@ -1,12 +1,12 @@
 import {Extra, Telegram} from 'telegraf'
 import {TelegrafWikibase} from 'telegraf-wikibase'
 
+import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
 import {calcMysticStrength, calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel} from './lib/model'
 import {EMOJI} from './lib/interface/emoji'
 import {wikidataInfoHeader} from './lib/interface/generals'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
-import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
 
 const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
