@@ -1,10 +1,10 @@
-import {Extra} from 'telegraf'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
+import {html as format} from 'telegram-format'
 
 import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from '../lib/model/battle-math'
 import {calculateBattleFatigue} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
-import {PLAYER_ATTACKING_UNITS, calcPartialUnitsFromPlayerUnits, calcWallArcherBonus, ZERO_UNITS, calcUnitSum} from '../lib/model/units'
+import {PLAYER_ATTACKING_UNITS, calcPartialUnitsFromPlayerUnits, calcWallArcherBonus, ZERO_UNITS, calcUnitSum, PlayerUnits} from '../lib/model/units'
 import * as userSessions from '../lib/user-sessions'
 
 import {backButtons} from '../lib/interface/menu'
@@ -12,21 +12,17 @@ import {EMOJI} from '../lib/interface/emoji'
 import {formatCooldown} from '../lib/interface/format-time'
 import {formatNamePlain} from '../lib/interface/name'
 import {formatNumberShort} from '../lib/interface/format-number'
+import {generateUnitOneLine} from '../lib/interface/army'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
-function afterBattleMessageText(attack: boolean, win: boolean, name: Name): string {
-	const lines: string[] = []
-
-	let headline = ''
-	headline += attack ? EMOJI.attack : EMOJI.defence
-	headline += win ? EMOJI.win : EMOJI.lose
-	headline += ' '
-	headline += '*'
-	headline += formatNamePlain(name)
-	headline += '*'
-	lines.push(headline)
-
-	return lines.join('\n')
+function battleReportPart(emoji: string, name: Name, units: Partial<PlayerUnits>): string {
+	let text = ''
+	text += emoji
+	text += ' '
+	text += format.bold(format.escape(formatNamePlain(name)))
+	text += '\n'
+	text += generateUnitOneLine(units)
+	return text
 }
 
 async function menuBody(ctx: Context): Promise<Body> {
@@ -127,7 +123,16 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		ctx.session.battleCooldownEnd = now + cooldownSeconds
 		ctx.session.battleFatigueEnd = now + newFatigueSeconds
 
-		await ctx.replyWithMarkdown(afterBattleMessageText(true, attackerWins, target.name!))
+		const textParts: string[] = []
+		textParts.push(battleReportPart(EMOJI.attack, attacker.name!, attackingUnits))
+		textParts.push(battleReportPart(EMOJI.defence, target.name!, defendingUnits))
+		textParts.push(EMOJI.war + EMOJI.war + EMOJI.war)
+		textParts.push(battleReportPart(attackerWins ? EMOJI.win : EMOJI.lose, attacker.name!, attacker.units))
+		textParts.push(battleReportPart(attackerWins ? EMOJI.lose : EMOJI.win, target.name!, target.units))
+		textParts.push('lazy dev… no loot yet…')
+		const text = textParts.map(o => o.trim()).join('\n\n')
+
+		await ctx.reply(text, {parse_mode: format.parse_mode})
 
 		const isBetrayal = attacker.name?.last && attacker.name.last === target.name?.last
 		if (isBetrayal) {
@@ -144,7 +149,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 
 		if (!target.blocked) {
 			try {
-				await ctx.tg.sendMessage(targetId, afterBattleMessageText(false, !attackerWins, attacker.name!), Extra.markdown() as any)
+				await ctx.tg.sendMessage(targetId, text, {parse_mode: format.parse_mode})
 			} catch (error) {
 				console.error('send defender battlereport failed', targetId, error.message)
 				target.blocked = true

@@ -36,6 +36,7 @@
 		"telegraf-middleware-console-time": "^1.1.0",
 		"telegraf-session-local": "^1.0.3",
 		"telegraf-wikibase": "^0.8.0",
+		"telegram-format": "^2.0.0",
 		"wikidata-entity-reader": "^2.0.0",
 		"wikidata-person-names": "^1.0.0",
 		"wikidata-sdk": "^7.4.3",

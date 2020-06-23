@@ -2,7 +2,7 @@ import {Context} from '../context'
 import {costResourcesPart} from './resource'
 import {EMOJI} from './emoji'
 import {formatPercentage} from './format-number'
-import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST} from '../model/units'
+import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST, PlayerUnits, PLAYER_UNIT_ARMY_TYPES} from '../model/units'
 import {wikidataInfoHeader} from './generals'
 
 export async function generateUnitDetailsPart(ctx: Context, armyType: PlayerUnitArmyType, amount: number): Promise<string> {
@@ -39,4 +39,18 @@ export async function recruitButtonText(ctx: Context, armyType: PlayerUnitArmyTy
 	const readerArmy = await ctx.wd.reader('army.' + armyType)
 	const readerRecruit = await ctx.wd.reader('action.recruit')
 	return EMOJI.recruit + readerRecruit.label() + ' ' + EMOJI[armyType] + readerArmy.label()
+}
+
+function generateUnitAmountString(armyType: PlayerUnitArmyType, amount: number): string {
+	return `${amount}${EMOJI[armyType]}`
+}
+
+export function generateUnitOneLine(units: Partial<PlayerUnits>): string {
+	return PLAYER_UNIT_ARMY_TYPES
+		.map(o => {
+			const amount = units[o]
+			return amount ? generateUnitAmountString(o, amount) : undefined
+		})
+		.filter((o): o is string => Boolean(o))
+		.join('  ')
 }
