@@ -4,12 +4,6 @@ import {ensureBetweenFinite} from './js-helper'
 import {MINUTE} from './unix-time'
 import * as resourceMath from './model/resource-math'
 
-const PER_MINUTE = 1 / MINUTE
-
-function foodPenalty(session: Session): number {
-	return session.resources.food > 0 ? 1 : 0.2
-}
-
 function initWhenMissing(session: Session, now: number): void {
 	if (!session.buildings) {
 		session.buildings = {...ZERO_BUILDINGS}
@@ -31,7 +25,7 @@ function initWhenMissing(session: Session, now: number): void {
 
 function calcCurrentResources(session: Session, now: number): void {
 	const totalSeconds = now - session.resourcesTimestamp
-	const totalMinutes = Math.floor(PER_MINUTE * foodPenalty(session) * totalSeconds)
+	const totalMinutes = Math.floor(totalSeconds / MINUTE)
 
 	if (totalMinutes > 0) {
 		const incomePerMinute = resourceMath.sum(
