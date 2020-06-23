@@ -3,7 +3,7 @@ import arrayFilterUnique from 'array-filter-unique'
 import randomItem from 'random-item'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {BUILDINGS, Building} from '../lib/model'
+import {BUILDINGS, Building} from '../lib/model/buildings'
 import {Context} from '../lib/context'
 import * as userSessions from '../lib/user-sessions'
 import * as wdSets from '../lib/wikidata-sets'

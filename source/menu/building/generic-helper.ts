@@ -1,6 +1,6 @@
 import {MenuTemplate} from 'telegraf-inline-menu'
 
-import {Building, calcBuildingCost, changeBuildingLevel} from '../../lib/model'
+import {Building, calcBuildingCost, changeBuildingLevel} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 

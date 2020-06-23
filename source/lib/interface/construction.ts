@@ -1,4 +1,5 @@
-import {Building, Buildings, calcStorageCapacity, calcWallArcherBonus} from '../model'
+import {Building, Buildings, calcStorageCapacity} from '../model/buildings'
+import {calcWallArcherBonus} from '../model/units'
 import {Context} from '../context'
 
 import {currentResourcesPart} from './resource'

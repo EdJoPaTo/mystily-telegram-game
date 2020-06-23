@@ -1,7 +1,8 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcBuildingCost, calcResourceIncomeFromBuilding, RESOURCES} from '../../lib/model'
+import {calcResourceIncomeFromBuilding, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
+import {RESOURCES} from '../../lib/model/resources'
 
 import {backButtons} from '../../lib/interface/menu'
 import {upgradeResourcesPart, incomeResourcesPart} from '../../lib/interface/resource'

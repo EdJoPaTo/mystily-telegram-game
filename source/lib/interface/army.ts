@@ -2,7 +2,7 @@ import {Context} from '../context'
 import {costResourcesPart} from './resource'
 import {EMOJI} from './emoji'
 import {formatPercentage} from './format-number'
-import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST} from '../model'
+import {PlayerUnitArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST} from '../model/units'
 import {wikidataInfoHeader} from './generals'
 
 export async function generateUnitDetailsPart(ctx: Context, armyType: PlayerUnitArmyType, amount: number): Promise<string> {

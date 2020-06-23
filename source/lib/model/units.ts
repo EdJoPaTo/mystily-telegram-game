@@ -56,14 +56,6 @@ export const ZERO_UNITS: PlayerUnits = {
 	villager: 0
 }
 
-export interface UnitStats {
-	readonly type: ArmyType;
-	readonly attack: Attack;
-	remainingHealth: number;
-}
-
-export type Army = readonly UnitStats[]
-
 export function calcWallArcherBonus(currentWallLevel: number): number {
 	return 1 + (currentWallLevel * 0.3)
 }
@@ -72,28 +64,17 @@ export function calcMaxPeoplePerBarracks(currentBarracksLevel: number): number {
 	return currentBarracksLevel * 10
 }
 
-function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
-	return {
-		type,
-		attack: BASE_ATTACK[type],
-		remainingHealth: BASE_HEALTH[type] * wallBonus
-	}
-}
-
-export function calcArmyFromPlayerUnits(playerUnits: PlayerUnits, isAttacker: boolean, wallBonus: number): Army {
-	const result: UnitStats[] = []
-
-	for (const type of isAttacker ? PLAYER_ATTACKING_UNITS : PLAYER_UNIT_ARMY_TYPES) {
-		for (let i = 0; i < playerUnits[type]; i++) {
-			result.push(unitStatsFromType(type, !isAttacker && type === 'archer' ? wallBonus : 1))
-		}
+export function calcPartialUnitsFromPlayerUnits(playerUnits: PlayerUnits, relevantUnits: readonly PlayerUnitArmyType[]): Partial<PlayerUnits> {
+	const result: Partial<Record<PlayerUnitArmyType, number>> = {}
+	for (const type of relevantUnits) {
+		result[type] = playerUnits[type]
 	}
 
 	return result
 }
 
-export function calcArmyUnitSum(playerUnits: PlayerUnits): number {
+export function calcUnitSum(playerUnits: Partial<PlayerUnits>): number {
 	return PLAYER_UNIT_ARMY_TYPES
-		.map(o => playerUnits[o])
+		.map(o => playerUnits[o] ?? 0)
 		.reduce((a, b) => a + b)
 }

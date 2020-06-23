@@ -1,6 +1,6 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from '../lib/model'
+import {BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from '../lib/model/buildings'
 import {Context} from '../lib/context'
 import * as resourceMath from '../lib/model/resource-math'
 

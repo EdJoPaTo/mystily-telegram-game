@@ -1,5 +1,13 @@
-import {Army, PlayerUnits, BLOCK_CHANCE} from './army'
+import {PlayerUnits, BLOCK_CHANCE, BASE_ATTACK, BASE_HEALTH, ArmyType, Attack, PLAYER_UNIT_ARMY_TYPES} from './units'
 import randomItem from 'random-item'
+
+export type Army = readonly UnitStats[]
+
+export interface UnitStats {
+	readonly type: ArmyType;
+	readonly attack: Attack;
+	remainingHealth: number;
+}
 
 export interface BattleResult {
 	readonly attackerWins: boolean;
@@ -7,15 +15,24 @@ export interface BattleResult {
 	readonly defenderArmyRemaining: PlayerUnits;
 }
 
-export function determineBattleResult(attacker: Army, defender: Army): BattleResult {
-	const attackerSane = attacker.filter(o => o.remainingHealth > 0)
-	const defenderSane = defender.filter(o => o.remainingHealth > 0)
-
+function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
 	return {
-		attackerWins: defenderSane.length === 0,
-		attackerArmyRemaining: remainingPlayerUnits(attackerSane),
-		defenderArmyRemaining: remainingPlayerUnits(defenderSane)
+		type,
+		attack: BASE_ATTACK[type],
+		remainingHealth: BASE_HEALTH[type] * wallBonus
 	}
+}
+
+export function calcArmyFromUnits(playerUnits: Partial<PlayerUnits>, wallBonus: number): Army {
+	const result: UnitStats[] = []
+
+	for (const type of PLAYER_UNIT_ARMY_TYPES) {
+		for (let i = 0; i < (playerUnits[type] ?? 0); i++) {
+			result.push(unitStatsFromType(type, type === 'archer' ? wallBonus : 1))
+		}
+	}
+
+	return result
 }
 
 export function remainingPlayerUnits(army: Army): PlayerUnits {

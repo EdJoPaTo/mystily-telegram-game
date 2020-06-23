@@ -1,5 +1,5 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
-import {Building} from '../lib/model'
+import {Building} from '../lib/model/buildings'
 import {Context, Session} from '../lib/context'
 import * as userSessions from '../lib/user-sessions'
 

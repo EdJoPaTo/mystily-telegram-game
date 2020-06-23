@@ -1,5 +1,5 @@
 import {Context} from '../context'
-import {Resource, Resources, RESOURCES} from '../model'
+import {Resource, Resources, RESOURCES} from '../model/resources'
 
 import {formatNumberShort} from './format-number'
 import {EMOJI, possibleEmoji} from './emoji'

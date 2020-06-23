@@ -1,7 +1,9 @@
-import {calcResourceIncomeFromBuilding, BUILDINGS, calcStorageCapacity, STARTING_RESOURCES, ZERO_BUILDINGS, ZERO_UNITS} from './model'
 import {Context, Session} from './context'
 import {ensureBetweenFinite} from './js-helper'
 import {MINUTE} from './unix-time'
+import {STARTING_RESOURCES} from './model/resources'
+import {ZERO_BUILDINGS, BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from './model/buildings'
+import {ZERO_UNITS} from './model/units'
 import * as resourceMath from './model/resource-math'
 
 function initWhenMissing(session: Session, now: number): void {

@@ -1,4 +1,5 @@
-import {Army, BASE_ATTACK, UnitStats} from './army'
+import {Army, UnitStats} from './battle-math'
+import {BASE_ATTACK} from './units'
 
 type QNumber = string
 

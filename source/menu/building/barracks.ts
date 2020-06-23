@@ -1,6 +1,7 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcBuildingCost, calcBarracksMaxPeople, calcArmyUnitSum, PLAYER_ATTACKING_UNITS, PlayerUnitArmyType, UNIT_COST} from '../../lib/model'
+import {calcUnitSum, PLAYER_ATTACKING_UNITS, PlayerUnitArmyType, UNIT_COST} from '../../lib/model/units'
+import {calcBarracksMaxPeople, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 
@@ -20,7 +21,7 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	const textParts: string[] = []
 	textParts.push(await infoHeader(ctx, 'barracks', level))
 
-	const currentAmount = calcArmyUnitSum(ctx.session.units)
+	const currentAmount = calcUnitSum(ctx.session.units)
 	const maxAmount = calcBarracksMaxPeople(ctx.session.buildings.barracks)
 	textParts.push(`${currentAmount}${EMOJI.army} / ${maxAmount}${EMOJI.army}`)
 
@@ -39,7 +40,7 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 
 menu.choose('recruit', canRecruitOptions, {
 	columns: 1,
-	hide: ctx => calcArmyUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
+	hide: ctx => calcUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
 	buttonText: async (ctx, key) => recruitButtonText(ctx, key as PlayerUnitArmyType),
 	do: (ctx, key) => {
 		const armyType = key as PlayerUnitArmyType

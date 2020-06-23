@@ -2,7 +2,9 @@ import {Context as TelegrafContext} from 'telegraf'
 import {I18n} from 'telegraf-i18n'
 import {MiddlewareProperty} from 'telegraf-wikibase'
 
-import {Buildings, Resources, PlayerUnits} from './model'
+import {Buildings} from './model/buildings'
+import {PlayerUnits} from './model/units'
+import {Resources} from './model/resources'
 
 type UnixSeconds = number
 type UserId = number

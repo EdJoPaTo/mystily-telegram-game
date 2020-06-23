@@ -2,13 +2,17 @@ import {RawObjectInMemoryFile} from '@edjopato/datastore'
 import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
 
-import {calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum, Mystic, createMysticFromEntityId} from './lib/model'
-import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
-import {EMOJI} from './lib/interface/emoji'
+import {Building, changeBuildingLevel} from './lib/model/buildings'
+import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from './lib/model/battle-math'
+import {calcWallArcherBonus, calcUnitSum} from './lib/model/units'
 import {HOUR, MINUTE, DAY} from './lib/unix-time'
-import {wikidataInfoHeader} from './lib/interface/generals'
+import {Mystic, createMysticFromEntityId, getMysticAsArmy} from './lib/model/mystic'
+import {ZERO_RESOURCES} from './lib/model/resources'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
+
+import {EMOJI} from './lib/interface/emoji'
+import {wikidataInfoHeader} from './lib/interface/generals'
 
 const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
@@ -58,11 +62,11 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const {qNumber, maxHealth, remainingHealth} = currentMystic
 		const readerMystic = await twb.reader(qNumber, languageCode)
 
-		const playerArmy = calcArmyFromPlayerUnits(session.units, false, calcWallArcherBonus(session.buildings.wall))
+		const playerArmy = calcArmyFromUnits(session.units, calcWallArcherBonus(session.buildings.wall))
 		const mysticArmy = getMysticAsArmy(remainingHealth, session.buildings.barracks + session.buildings.placeOfWorship)
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('befor mystics battle', user, maxHealth, remainingHealth, calcArmyUnitSum(session.units), session.units)
+			console.log('befor mystics battle', user, maxHealth, remainingHealth, calcUnitSum(session.units), session.units)
 		}
 
 		calcBattle(mysticArmy, playerArmy)
@@ -72,7 +76,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const mysticStillAlive = newRemainingHealth > 0
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('after mystics battle', user, maxHealth, newRemainingHealth, calcArmyUnitSum(session.units), session.units)
+			console.log('after mystics battle', user, maxHealth, newRemainingHealth, calcUnitSum(session.units), session.units)
 		}
 
 		if (mysticStillAlive) {

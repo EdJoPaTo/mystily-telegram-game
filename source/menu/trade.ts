@@ -1,6 +1,6 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcStorageCapacity} from '../lib/model'
+import {calcStorageCapacity} from '../lib/model/buildings'
 import {Context} from '../lib/context'
 
 import {backButtons} from '../lib/interface/menu'

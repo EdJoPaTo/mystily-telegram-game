@@ -1,8 +1,9 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Buildings, Building, Resources, BUILDINGS, calcBuildingCost} from '../../lib/model'
-import {isEnough} from '../../lib/model/resource-math'
+import {Buildings, Building, BUILDINGS, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
+import {isEnough} from '../../lib/model/resource-math'
+import {Resources} from '../../lib/model/resources'
 
 import {backButtons, wdButtonText} from '../../lib/interface/menu'
 import {constructionLine} from '../../lib/interface/construction'

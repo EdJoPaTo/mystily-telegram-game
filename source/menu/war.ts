@@ -1,12 +1,13 @@
 import {Extra} from 'telegraf'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcArmyFromPlayerUnits, PLAYER_UNIT_ARMY_TYPES, ZERO_UNITS, PLAYER_ATTACKING_UNITS, calculateBattleFatigue} from '../lib/model'
+import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from '../lib/model/battle-math'
+import {calculateBattleFatigue} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
+import {PLAYER_ATTACKING_UNITS, calcPartialUnitsFromPlayerUnits, calcWallArcherBonus, ZERO_UNITS, calcUnitSum} from '../lib/model/units'
 import * as userSessions from '../lib/user-sessions'
 
 import {backButtons} from '../lib/interface/menu'
-import {calcBattle, remainingPlayerUnits} from '../lib/model/army-math'
 import {EMOJI} from '../lib/interface/emoji'
 import {formatCooldown} from '../lib/interface/format-time'
 import {formatNamePlain} from '../lib/interface/name'
@@ -91,9 +92,12 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		const now = Date.now() / 1000
 
 		const attacker = ctx.session
+		const attackingUnits = calcPartialUnitsFromPlayerUnits(attacker.units, PLAYER_ATTACKING_UNITS)
 
 		const targetId = ctx.session.attackTarget!
 		const target = userSessions.getUser(targetId)!
+		const defendingUnits = target.units
+		const targetWallBonus = calcWallArcherBonus(target.buildings.wall)
 
 		delete ctx.session.attackTarget
 
@@ -107,15 +111,15 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 			return '.'
 		}
 
-		const attackerArmy = calcArmyFromPlayerUnits(attacker.units, true, 1)
-		const defenderArmy = calcArmyFromPlayerUnits(target.units, false, target.buildings.wall)
+		const attackerArmy = calcArmyFromUnits(attackingUnits, 1)
+		const defenderArmy = calcArmyFromUnits(defendingUnits, targetWallBonus)
 
 		calcBattle(attackerArmy, defenderArmy)
 
 		attacker.units = remainingPlayerUnits(attackerArmy)
 		target.units = remainingPlayerUnits(defenderArmy)
 
-		const amountTargetUnits = PLAYER_UNIT_ARMY_TYPES.map(o => target.units[o]).reduce((a, b) => a + b, 0)
+		const amountTargetUnits = calcUnitSum(target.units)
 		const attackerWins = amountTargetUnits === 0
 
 		const currentFatigueSeconds = Math.max(0, ctx.session.battleFatigueEnd ? ctx.session.battleFatigueEnd - now : 0)

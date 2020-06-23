@@ -1,6 +1,7 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcBuildingCost, calcBarracksMaxPeople, calcArmyUnitSum, UNIT_COST} from '../../lib/model'
+import {calcUnitSum, UNIT_COST} from '../../lib/model/units'
+import {calcBarracksMaxPeople, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 
@@ -20,7 +21,7 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	const textParts: string[] = []
 	textParts.push(await infoHeader(ctx, 'placeOfWorship', level))
 
-	const currentAmount = calcArmyUnitSum(ctx.session.units)
+	const currentAmount = calcUnitSum(ctx.session.units)
 	const maxAmount = calcBarracksMaxPeople(ctx.session.buildings.barracks)
 	textParts.push(`${currentAmount}${EMOJI.army} / ${maxAmount}${EMOJI.army}`)
 
@@ -60,7 +61,7 @@ menu.url(async ctx => `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label
 menu.manualRow(backButtons)
 
 function canRecruit(ctx: Context): boolean {
-	if (calcArmyUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks)) {
+	if (calcUnitSum(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks)) {
 		return false
 	}
 
