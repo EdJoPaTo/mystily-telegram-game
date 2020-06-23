@@ -5,7 +5,7 @@ import {Telegram} from 'telegraf'
 import {calcArmyFromPlayerUnits, calcWallArcherBonus, getMysticAsArmy, ZERO_RESOURCES, Building, changeBuildingLevel, calcArmyUnitSum, Mystic, createMysticFromEntityId} from './lib/model'
 import {calcBattle, remainingPlayerUnits} from './lib/model/army-math'
 import {EMOJI} from './lib/interface/emoji'
-import {HOUR, MINUTE} from './lib/unix-time'
+import {HOUR, MINUTE, DAY} from './lib/unix-time'
 import {wikidataInfoHeader} from './lib/interface/generals'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
@@ -13,7 +13,8 @@ import * as wdSets from './lib/wikidata-sets'
 const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
 const ATTACK_INTERVAL = 30 * MINUTE
-const MAX_ATTACK_INTERVAL_PER_PLAYER = 18 * HOUR
+// Rotate around the day to ensure all timezones are equally "happy"
+const MAX_ATTACK_INTERVAL_PER_PLAYER = (3 * DAY) + (2 * HOUR)
 
 const data = new RawObjectInMemoryFile<Mystic>('persist/mystic.json')
 

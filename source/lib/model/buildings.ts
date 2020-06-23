@@ -44,17 +44,17 @@ export const ZERO_BUILDINGS: Buildings = {
 }
 
 const FACTORS: Readonly<Record<Building, Resources>> = {
-	townhall: {food: 800, wood: 800, loam: 800, stone: 400, iron: 100},
-	marketplace: {food: 500, wood: 500, loam: 200, stone: 100, iron: 20},
+	townhall: {food: 2000, wood: 1500, loam: 1500, stone: 1000, iron: 500},
+	marketplace: {food: 1000, wood: 800, loam: 400, stone: 200, iron: 50},
 	storage: {food: 300, wood: 550, loam: 550, stone: 350, iron: 150},
-	sawmill: {food: 30, wood: 5, loam: 20, stone: 1, iron: 1},
-	loampit: {food: 30, wood: 20, loam: 5, stone: 1, iron: 1},
-	quarry: {food: 30, wood: 20, loam: 5, stone: 3, iron: 3},
-	mine: {food: 30, wood: 30, loam: 30, stone: 15, iron: 5},
-	farm: {food: 0, wood: 10, loam: 10, stone: 1, iron: 1},
+	sawmill: {food: 40, wood: 10, loam: 40, stone: 1, iron: 1},
+	loampit: {food: 40, wood: 40, loam: 10, stone: 1, iron: 1},
+	quarry: {food: 50, wood: 40, loam: 20, stone: 5, iron: 5},
+	mine: {food: 60, wood: 40, loam: 40, stone: 20, iron: 10},
+	farm: {food: 0, wood: 30, loam: 30, stone: 3, iron: 3},
 	barracks: {food: 500, wood: 400, loam: 200, stone: 10, iron: 100},
 	wall: {food: 500, wood: 400, loam: 400, stone: 700, iron: 300},
-	placeOfWorship: {food: 2000, wood: 1700, loam: 1700, stone: 1000, iron: 800}
+	placeOfWorship: {food: 5000, wood: 4000, loam: 4000, stone: 3000, iron: 1000}
 }
 
 export function calcBuildingCost(building: Building, currentLevel: number): Resources {
@@ -73,9 +73,9 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 	switch (building) {
 		case 'townhall':
 			return {
-				food: 8 * nextLevel,
-				wood: 4 * nextLevel,
-				loam: 4 * nextLevel,
+				food: 10 * nextLevel,
+				wood: 6 * nextLevel,
+				loam: 6 * nextLevel,
 				stone: 2 * nextLevel,
 				iron: nextLevel
 			}
