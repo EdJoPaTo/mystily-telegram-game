@@ -39,6 +39,8 @@ action:
   upgrade: Q920419
 battle:
   betrayal: Q2166722
+  cooldown: Q4925315
+  fatigue: Q9690
   suicide: Q10737
   target: P533
 name:

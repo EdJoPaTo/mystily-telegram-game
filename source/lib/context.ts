@@ -17,6 +17,8 @@ export interface Name {
 export interface Session {
 	__wikibase_language_code?: string;
 	attackTarget?: UserId;
+	battleCooldownEnd?: UnixSeconds;
+	battleFatigueEnd?: UnixSeconds;
 	blocked?: boolean;
 	buildings: Buildings;
 	createFirst?: string;
