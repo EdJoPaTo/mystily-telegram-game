@@ -40,8 +40,8 @@ export async function getCurrentMystical(): Promise<Readonly<Mystic>> {
 
 async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 	const now = Date.now() / 1000
-	const minTimestamp = now + MAX_ATTACK_INTERVAL_PER_PLAYER
-	const target = userSessions.getRandomUser(o => !o.data.blocked && o.data.lastMysticAttack > minTimestamp)
+	const visitedByMysticsNoLaterThan = now - MAX_ATTACK_INTERVAL_PER_PLAYER
+	const target = userSessions.getRandomUser(o => !o.data.blocked && o.data.lastMysticAttack < visitedByMysticsNoLaterThan)
 
 	if (!target) {
 		// No suitable player found
@@ -66,6 +66,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 
 		calcBattle(mysticArmy, playerArmy)
 		session.units = remainingPlayerUnits(playerArmy)
+		session.lastMysticAttack = now
 		const newRemainingHealth = mysticArmy.map(o => o.remainingHealth).reduce((a, b) => a + b, 0)
 		const mysticStillAlive = newRemainingHealth > 0
 
