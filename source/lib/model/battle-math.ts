@@ -9,12 +9,6 @@ export interface UnitStats {
 	remainingHealth: number;
 }
 
-export interface BattleResult {
-	readonly attackerWins: boolean;
-	readonly attackerArmyRemaining: PlayerUnits;
-	readonly defenderArmyRemaining: PlayerUnits;
-}
-
 function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
 	return {
 		type,
