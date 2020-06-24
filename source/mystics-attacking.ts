@@ -31,7 +31,7 @@ export function start(telegram: Readonly<Telegram>, telegrafWikibase: TelegrafWi
 	setInterval(tryAttack, ATTACK_INTERVAL * 1000, telegram)
 }
 
-export async function getCurrentMystical(): Promise<Readonly<Mystic>> {
+export async function getCurrentMystic(): Promise<Readonly<Mystic>> {
 	if (!data.get()) {
 		const qNumber = wdSets.getRandom('mystics')
 		if (!qNumber) {
@@ -59,7 +59,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 	try {
 		const languageCode = session.__wikibase_language_code ?? 'en'
 
-		const currentMystic = await getCurrentMystical()
+		const currentMystic = await getCurrentMystic()
 		const {qNumber, maxHealth, remainingHealth} = currentMystic
 		const readerMystic = await twb.reader(qNumber, languageCode)
 
