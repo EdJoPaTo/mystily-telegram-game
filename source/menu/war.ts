@@ -2,7 +2,7 @@ import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import {html as format} from 'telegram-format'
 
 import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from '../lib/model/battle-math'
-import {calculateBattleFatigue} from '../lib/model/war'
+import {calculateBattleFatigue, calculatePlayerAttackImmunity} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
 import {PLAYER_ATTACKING_UNITS, calcPartialUnitsFromPlayerUnits, calcWallArcherBonus, ZERO_UNITS, calcUnitSum, PlayerUnits} from '../lib/model/units'
 import * as userSessions from '../lib/user-sessions'
@@ -77,12 +77,24 @@ export const menu = new MenuTemplate(menuBody)
 menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')).label()}`, 'attack', {
 	hide: ctx => {
 		const now = Date.now() / 1000
+		const {attackTarget} = ctx.session
+		if (!attackTarget) {
+			return true
+		}
 
-		const hasNoTarget = !ctx.session.attackTarget
 		const hasNoUnits = PLAYER_ATTACKING_UNITS.every(type => ctx.session.units[type] === 0)
 		const hasCooldown = ctx.session.battleCooldownEnd ? ctx.session.battleCooldownEnd > now : false
+		if (hasNoUnits || hasCooldown) {
+			return true
+		}
 
-		return hasNoTarget || hasNoUnits || hasCooldown
+		const targetImmuneUntil = userSessions.getUser(attackTarget)!.immuneToPlayerAttacksUntil
+		if (targetImmuneUntil > now) {
+			delete ctx.session.attackTarget
+			return true
+		}
+
+		return false
 	},
 	do: async ctx => {
 		const now = Date.now() / 1000
@@ -123,6 +135,8 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		ctx.session.battleCooldownEnd = now + cooldownSeconds
 		ctx.session.battleFatigueEnd = now + newFatigueSeconds
 
+		target.immuneToPlayerAttacksUntil = calculatePlayerAttackImmunity(now)
+
 		const textParts: string[] = []
 		textParts.push(battleReportPart(EMOJI.attack, attacker.name!, attackingUnits))
 		textParts.push(battleReportPart(EMOJI.defence, target.name!, defendingUnits))
@@ -162,7 +176,8 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 
 menu.interact(async ctx => `${EMOJI.search} ${(await ctx.wd.reader('action.search')).label()}`, 'search', {
 	do: ctx => {
-		const chosen = userSessions.getRandomUser(o => Boolean(o.data.name && o.user !== ctx.session.attackTarget))
+		const now = Date.now() / 1000
+		const chosen = userSessions.getRandomUser(o => Boolean(o.data.name && o.user !== ctx.session.attackTarget && o.data.immuneToPlayerAttacksUntil < now))
 		ctx.session.attackTarget = chosen?.user
 		return '.'
 	}

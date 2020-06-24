@@ -25,6 +25,7 @@ export interface Session {
 	buildings: Buildings;
 	createFirst?: string;
 	createLast?: string | false;
+	immuneToPlayerAttacksUntil: UnixSeconds;
 	lastMysticAttack: UnixSeconds;
 	name?: Name;
 	page?: number;
