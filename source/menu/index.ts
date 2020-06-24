@@ -72,7 +72,7 @@ menu.submenu(buttonText(EMOJI.search, 'menu.spy'), 'spy', spyMenu, {
 
 menu.submenu(buttonText(EMOJI.language, 'menu.language'), 'lang', languageMenu)
 
-menu.submenu(buttonText(EMOJI.statistics, 'menu.statistics'), 'stats', statsMenu, {
+menu.submenu(buttonText(EMOJI.statistics, 'stat.stats'), 'stats', statsMenu, {
 	joinLastRow: true
 })
 

@@ -6,7 +6,6 @@ menu:
   mystic: Q2239243
   name: Q1071027
   spy: Q9352089
-  statistics: Q12483
   wikidataItem: Q16222597
   buildings: Q41176
   trade: Q601401
@@ -56,6 +55,14 @@ unit:
   day: Q573
   minute: Q7727
   second: Q11574
+stat:
+  player: Q4197743
+  stats: Q35308049
+  name:
+    family: Q101352
+    female: Q11879590
+    male: Q12308941
+    unisex: Q3409032
 other:
   income: Q1527264
   storageCapacity: Q21551014

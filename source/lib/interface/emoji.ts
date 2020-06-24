@@ -39,7 +39,7 @@ export const EMOJI = {
 	ranged: '🎯',
 	mystical: '🌈',
 
-	activeUser: '💙',
+	activeUser: '🥰',
 	betrayal: '😈',
 	chat: '💭',
 	fire: '🔥',
