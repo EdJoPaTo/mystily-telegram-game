@@ -2,11 +2,15 @@ import {Context, Session} from './context'
 import {ensureBetweenFinite} from './js-helper'
 import {MINUTE, HOUR} from './unix-time'
 import {STARTING_RESOURCES} from './model/resources'
+import {ZERO_BARRACKS_UNITS} from './model/units'
 import {ZERO_BUILDINGS, BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from './model/buildings'
-import {ZERO_UNITS} from './model/units'
 import * as resourceMath from './model/resource-math'
 
 function initWhenMissing(session: Session, now: number): void {
+	if (!session.barracksUnits) {
+		session.barracksUnits = {...ZERO_BARRACKS_UNITS}
+	}
+
 	if (!session.buildings) {
 		session.buildings = {...ZERO_BUILDINGS}
 	}
@@ -22,10 +26,6 @@ function initWhenMissing(session: Session, now: number): void {
 	if (!session.resources || !session.resourcesTimestamp) {
 		session.resourcesTimestamp = now
 		session.resources = {...STARTING_RESOURCES}
-	}
-
-	if (!session.units) {
-		session.units = {...ZERO_UNITS}
 	}
 }
 

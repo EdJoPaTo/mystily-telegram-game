@@ -1,6 +1,6 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcUnitSum, PLAYER_ATTACKING_UNITS, PlayerUnitArmyType, UNIT_COST, PlayerUnits, calcPartialUnitsFromPlayerUnits} from '../../lib/model/units'
+import {calcUnitSum, PLAYER_BARRACKS_ARMY_TYPES, BarracksArmyType, UNIT_COST} from '../../lib/model/units'
 import {calcBarracksMaxPeople, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
@@ -15,22 +15,18 @@ import {constructionFromCtx, addUpgradeButton} from './generic-helper'
 
 export const menu = new MenuTemplate<Context>(constructionBody)
 
-function currentSumInBarracks(units: PlayerUnits): number {
-	return calcUnitSum(calcPartialUnitsFromPlayerUnits(units, PLAYER_ATTACKING_UNITS))
-}
-
 async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	const {level} = constructionFromCtx(ctx, path)
 
 	const textParts: string[] = []
 	textParts.push(await infoHeader(ctx, 'barracks', level))
 
-	const currentAmount = currentSumInBarracks(ctx.session.units)
+	const currentAmount = calcUnitSum(ctx.session.barracksUnits)
 	const maxAmount = calcBarracksMaxPeople(ctx.session.buildings.barracks)
 	textParts.push(`${currentAmount}${EMOJI.army} / ${maxAmount}${EMOJI.army}`)
 
 	textParts.push(...await Promise.all(
-		PLAYER_ATTACKING_UNITS.map(async o => generateUnitDetailsAndCostPart(ctx, o))
+		PLAYER_BARRACKS_ARMY_TYPES.map(async o => generateUnitDetailsAndCostPart(ctx, o))
 	))
 
 	const requiredResources = calcBuildingCost('barracks', level)
@@ -44,15 +40,15 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 
 menu.choose('recruit', canRecruitOptions, {
 	columns: 1,
-	hide: ctx => currentSumInBarracks(ctx.session.units) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
-	buttonText: async (ctx, key) => recruitButtonText(ctx, key as PlayerUnitArmyType),
+	hide: ctx => calcUnitSum(ctx.session.barracksUnits) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
+	buttonText: async (ctx, key) => recruitButtonText(ctx, key as BarracksArmyType),
 	do: (ctx, key) => {
-		const armyType = key as PlayerUnitArmyType
+		const armyType = key as BarracksArmyType
 		ctx.session.resources = resourceMath.subtract(ctx.session.resources, UNIT_COST[armyType])
 
-		ctx.session.units = {
-			...ctx.session.units,
-			[armyType]: ctx.session.units[armyType] + 1
+		ctx.session.barracksUnits = {
+			...ctx.session.barracksUnits,
+			[armyType]: ctx.session.barracksUnits[armyType] + 1
 		}
 
 		return '.'
@@ -73,7 +69,7 @@ async function canRecruitOptions(ctx: Context): Promise<readonly string[]> {
 	const canBeRecruited: string[] = []
 	const currentResources = ctx.session.resources
 
-	for (const armyType of PLAYER_ATTACKING_UNITS) {
+	for (const armyType of PLAYER_BARRACKS_ARMY_TYPES) {
 		const cost = UNIT_COST[armyType]
 		if (resourceMath.isEnough(currentResources, cost)) {
 			canBeRecruited.push(armyType)

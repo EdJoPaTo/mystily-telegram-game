@@ -1,4 +1,4 @@
-import {PlayerUnits, BLOCK_CHANCE, BASE_ATTACK, BASE_HEALTH, ArmyType, Attack, PLAYER_UNIT_ARMY_TYPES} from './units'
+import {BarracksUnits, BLOCK_CHANCE, BASE_ATTACK, BASE_HEALTH, ArmyType, Attack, PLAYER_BARRACKS_ARMY_TYPES} from './units'
 import randomItem from 'random-item'
 
 export type Army = readonly UnitStats[]
@@ -17,11 +17,11 @@ function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
 	}
 }
 
-export function calcArmyFromUnits(playerUnits: Partial<PlayerUnits>, wallBonus: number): Army {
+export function armyFromBarracksUnits(barracksUnits: Partial<BarracksUnits>, wallBonus: number): Army {
 	const result: UnitStats[] = []
 
-	for (const type of PLAYER_UNIT_ARMY_TYPES) {
-		for (let i = 0; i < (playerUnits[type] ?? 0); i++) {
+	for (const type of PLAYER_BARRACKS_ARMY_TYPES) {
+		for (let i = 0; i < (barracksUnits[type] ?? 0); i++) {
 			result.push(unitStatsFromType(type, type === 'archer' ? wallBonus : 1))
 		}
 	}
@@ -29,11 +29,19 @@ export function calcArmyFromUnits(playerUnits: Partial<PlayerUnits>, wallBonus: 
 	return result
 }
 
-export function remainingPlayerUnits(army: Army): PlayerUnits {
+export function armyFromPlaceOfWorship(levelOfPlaceOfWorship: number): Army {
+	const result: UnitStats[] = []
+	for (let i = 0; i < levelOfPlaceOfWorship * 2; i++) {
+		result.push(unitStatsFromType('cleric', 1))
+	}
+
+	return result
+}
+
+export function remainingBarracksUnits(army: Army): BarracksUnits {
 	const sane = army.filter(o => o.remainingHealth > 0)
 	return {
 		archer: sane.filter(o => o.type === 'archer').length,
-		cleric: sane.filter(o => o.type === 'cleric').length,
 		swordfighter: sane.filter(o => o.type === 'swordfighter').length,
 		villager: sane.filter(o => o.type === 'villager').length
 	}

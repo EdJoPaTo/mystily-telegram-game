@@ -2,8 +2,8 @@ import {Context as TelegrafContext} from 'telegraf'
 import {I18n} from 'telegraf-i18n'
 import {MiddlewareProperty} from 'telegraf-wikibase'
 
+import {BarracksUnits} from './model/units'
 import {Buildings} from './model/buildings'
-import {PlayerUnits} from './model/units'
 import {Resources} from './model/resources'
 
 type UnixSeconds = number
@@ -19,6 +19,7 @@ export interface Name {
 export interface Session {
 	__wikibase_language_code?: string;
 	attackTarget?: UserId;
+	barracksUnits: BarracksUnits;
 	battleCooldownEnd?: UnixSeconds;
 	battleFatigueEnd?: UnixSeconds;
 	blocked?: boolean;
@@ -33,7 +34,6 @@ export interface Session {
 	resourcesTimestamp: UnixSeconds;
 	selectedSpy: string;
 	selectedSpyEmoji: string;
-	units: PlayerUnits;
 }
 
 export interface Context extends TelegrafContext {

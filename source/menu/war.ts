@@ -1,10 +1,10 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import {html as format} from 'telegram-format'
 
-import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from '../lib/model/battle-math'
+import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army} from '../lib/model/battle-math'
 import {calculateBattleFatigue, calculatePlayerAttackImmunity} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
-import {PLAYER_ATTACKING_UNITS, calcPartialUnitsFromPlayerUnits, calcWallArcherBonus, ZERO_UNITS, calcUnitSum, PlayerUnits} from '../lib/model/units'
+import {PLAYER_BARRACKS_ARMY_TYPES, calcWallArcherBonus, ZERO_BARRACKS_UNITS, calcUnitSum} from '../lib/model/units'
 import * as userSessions from '../lib/user-sessions'
 
 import {backButtons} from '../lib/interface/menu'
@@ -12,16 +12,16 @@ import {EMOJI} from '../lib/interface/emoji'
 import {formatCooldown} from '../lib/interface/format-time'
 import {formatNamePlain} from '../lib/interface/name'
 import {formatNumberShort} from '../lib/interface/format-number'
-import {generateUnitOneLine} from '../lib/interface/units'
+import {generateArmyOneLine} from '../lib/interface/units'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
-function battleReportPart(emoji: string, name: Name, units: Partial<PlayerUnits>): string {
+function battleReportPart(emoji: string, name: Name, army: Army): string {
 	let text = ''
 	text += emoji
 	text += ' '
 	text += format.bold(format.escape(formatNamePlain(name)))
 	text += '\n'
-	text += generateUnitOneLine(units)
+	text += generateArmyOneLine(army)
 	return text
 }
 
@@ -31,11 +31,11 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += wikidataInfoHeader(await ctx.wd.reader('menu.war'), {titlePrefix: EMOJI.war})
 	text += '\n\n'
 
-	for (const unit of PLAYER_ATTACKING_UNITS) {
+	for (const unit of PLAYER_BARRACKS_ARMY_TYPES) {
 		// eslint-disable-next-line no-await-in-loop
 		text += (await ctx.wd.reader(`army.${unit}`)).label()
 		text += ': '
-		text += formatNumberShort(ctx.session.units[unit], true)
+		text += formatNumberShort(ctx.session.barracksUnits[unit], true)
 		text += EMOJI[unit]
 		text += '\n'
 	}
@@ -82,7 +82,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 			return true
 		}
 
-		const hasNoUnits = PLAYER_ATTACKING_UNITS.every(type => ctx.session.units[type] === 0)
+		const hasNoUnits = calcUnitSum(ctx.session.barracksUnits) === 0
 		const hasCooldown = ctx.session.battleCooldownEnd ? ctx.session.battleCooldownEnd > now : false
 		if (hasNoUnits || hasCooldown) {
 			return true
@@ -100,11 +100,9 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		const now = Date.now() / 1000
 
 		const attacker = ctx.session
-		const attackingUnits = calcPartialUnitsFromPlayerUnits(attacker.units, PLAYER_ATTACKING_UNITS)
 
 		const targetId = ctx.session.attackTarget!
 		const target = userSessions.getUser(targetId)!
-		const defendingUnits = target.units
 		const targetWallBonus = calcWallArcherBonus(target.buildings.wall)
 
 		delete ctx.session.attackTarget
@@ -114,20 +112,23 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 				wikidataInfoHeader(await ctx.wd.reader('battle.suicide'), {titlePrefix: EMOJI.suicide})
 			)
 
-			attacker.units = {...ZERO_UNITS}
+			attacker.barracksUnits = {...ZERO_BARRACKS_UNITS}
 
 			return '.'
 		}
 
-		const attackerArmy = calcArmyFromUnits(attackingUnits, 1)
-		const defenderArmy = calcArmyFromUnits(defendingUnits, targetWallBonus)
+		const attackerArmy = armyFromBarracksUnits(attacker.barracksUnits, 1)
+		const defenderArmy = [
+			...armyFromBarracksUnits(target.barracksUnits, targetWallBonus),
+			...armyFromPlaceOfWorship(target.buildings.placeOfWorship)
+		]
 
 		calcBattle(attackerArmy, defenderArmy)
 
-		attacker.units = remainingPlayerUnits(attackerArmy)
-		target.units = remainingPlayerUnits(defenderArmy)
+		attacker.barracksUnits = remainingBarracksUnits(attackerArmy)
+		target.barracksUnits = remainingBarracksUnits(defenderArmy)
 
-		const amountTargetUnits = calcUnitSum(target.units)
+		const amountTargetUnits = calcUnitSum(target.barracksUnits)
 		const attackerWins = amountTargetUnits === 0
 
 		const currentFatigueSeconds = Math.max(0, ctx.session.battleFatigueEnd ? ctx.session.battleFatigueEnd - now : 0)
@@ -138,11 +139,11 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		target.immuneToPlayerAttacksUntil = calculatePlayerAttackImmunity(now)
 
 		const textParts: string[] = []
-		textParts.push(battleReportPart(EMOJI.attack, attacker.name!, attackingUnits))
-		textParts.push(battleReportPart(EMOJI.defence, target.name!, defendingUnits))
+		textParts.push(battleReportPart(EMOJI.attack, attacker.name!, attackerArmy))
+		textParts.push(battleReportPart(EMOJI.defence, target.name!, defenderArmy))
 		textParts.push(EMOJI.war + EMOJI.war + EMOJI.war)
-		textParts.push(battleReportPart(attackerWins ? EMOJI.win : EMOJI.lose, attacker.name!, attacker.units))
-		textParts.push(battleReportPart(attackerWins ? EMOJI.lose : EMOJI.win, target.name!, target.units))
+		textParts.push(battleReportPart(attackerWins ? EMOJI.win : EMOJI.lose, attacker.name!, attackerArmy.filter(o => o.remainingHealth > 0)))
+		textParts.push(battleReportPart(attackerWins ? EMOJI.lose : EMOJI.win, target.name!, defenderArmy.filter(o => o.remainingHealth > 0)))
 		textParts.push('lazy dev… no loot yet…')
 		const text = textParts.map(o => o.trim()).join('\n\n')
 

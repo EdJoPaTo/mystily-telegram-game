@@ -54,7 +54,7 @@ const FACTORS: Readonly<Record<Building, Resources>> = {
 	farm: {food: 0, wood: 30, loam: 30, stone: 3, iron: 3},
 	barracks: {food: 500, wood: 400, loam: 200, stone: 10, iron: 100},
 	wall: {food: 500, wood: 400, loam: 400, stone: 700, iron: 300},
-	placeOfWorship: {food: 5000, wood: 4000, loam: 4000, stone: 3000, iron: 1000}
+	placeOfWorship: {food: 5000, wood: 5000, loam: 5000, stone: 3500, iron: 1000}
 }
 
 export function calcBuildingCost(building: Building, currentLevel: number): Resources {

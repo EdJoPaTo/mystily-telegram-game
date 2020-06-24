@@ -3,7 +3,7 @@ import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
 
 import {Building, changeBuildingLevel} from './lib/model/buildings'
-import {calcArmyFromUnits, calcBattle, remainingPlayerUnits} from './lib/model/battle-math'
+import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship} from './lib/model/battle-math'
 import {calculatePlayerAttackImmunity} from './lib/model/war'
 import {calcWallArcherBonus, calcUnitSum} from './lib/model/units'
 import {HOUR, MINUTE, DAY} from './lib/unix-time'
@@ -63,22 +63,25 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const {qNumber, maxHealth, remainingHealth} = currentMystic
 		const readerMystic = await twb.reader(qNumber, languageCode)
 
-		const playerArmy = calcArmyFromUnits(session.units, calcWallArcherBonus(session.buildings.wall))
+		const playerArmy = [
+			...armyFromBarracksUnits(session.barracksUnits, calcWallArcherBonus(session.buildings.wall)),
+			...armyFromPlaceOfWorship(session.buildings.placeOfWorship)
+		]
 		const mysticArmy = getMysticAsArmy(remainingHealth, session.buildings.barracks + session.buildings.placeOfWorship)
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('befor mystics battle', user, maxHealth, remainingHealth, calcUnitSum(session.units), session.units)
+			console.log('befor mystics battle', user, maxHealth, remainingHealth, calcUnitSum(session.barracksUnits), session.barracksUnits)
 		}
 
 		calcBattle(mysticArmy, playerArmy)
-		session.units = remainingPlayerUnits(playerArmy)
+		session.barracksUnits = remainingBarracksUnits(playerArmy)
 		session.immuneToPlayerAttacksUntil = calculatePlayerAttackImmunity(now)
 		session.lastMysticAttack = now
 		const newRemainingHealth = mysticArmy.map(o => o.remainingHealth).reduce((a, b) => a + b, 0)
 		const mysticStillAlive = newRemainingHealth > 0
 
 		if (process.env.NODE_ENV !== 'production') {
-			console.log('after mystics battle', user, maxHealth, newRemainingHealth, calcUnitSum(session.units), session.units)
+			console.log('after mystics battle', user, maxHealth, newRemainingHealth, calcUnitSum(session.barracksUnits), session.barracksUnits)
 		}
 
 		if (mysticStillAlive) {
