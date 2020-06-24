@@ -12,7 +12,7 @@ import {EMOJI} from '../lib/interface/emoji'
 import {formatCooldown} from '../lib/interface/format-time'
 import {formatNamePlain} from '../lib/interface/name'
 import {formatNumberShort} from '../lib/interface/format-number'
-import {generateUnitOneLine} from '../lib/interface/army'
+import {generateUnitOneLine} from '../lib/interface/units'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
 function battleReportPart(emoji: string, name: Name, units: Partial<PlayerUnits>): string {

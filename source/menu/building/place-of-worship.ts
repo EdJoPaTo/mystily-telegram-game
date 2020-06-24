@@ -7,7 +7,7 @@ import * as resourceMath from '../../lib/model/resource-math'
 
 import {backButtons} from '../../lib/interface/menu'
 import {EMOJI} from '../../lib/interface/emoji'
-import {recruitButtonText, generateUnitDetailsAndCostPart} from '../../lib/interface/army'
+import {recruitButtonText, generateUnitDetailsAndCostPart} from '../../lib/interface/units'
 import {infoHeader} from '../../lib/interface/construction'
 import {upgradeResourcesPart} from '../../lib/interface/resource'
 
