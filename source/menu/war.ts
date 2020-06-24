@@ -1,4 +1,4 @@
-import {MenuTemplate, Body} from 'telegraf-inline-menu'
+import {MenuTemplate, Body, resendMenuToContext} from 'telegraf-inline-menu'
 import {html as format} from 'telegram-format'
 
 import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army} from '../lib/model/battle-math'
@@ -171,7 +171,8 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 			}
 		}
 
-		return '.'
+		await resendMenuToContext(menu, ctx, '/war/')
+		return false
 	}
 })
 
