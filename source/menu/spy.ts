@@ -81,6 +81,7 @@ menu.interact(async ctx => `${(await ctx.wd.reader('action.espionage')).label()}
 		message += pickedConstructionLevel
 
 		await ctx.answerCbQuery(message)
+		return false
 	}
 })
 
