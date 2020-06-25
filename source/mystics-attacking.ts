@@ -1,9 +1,10 @@
 import {RawObjectInMemoryFile} from '@edjopato/datastore'
 import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
+import randomItem from 'random-item'
 
-import {Building, changeBuildingLevel} from './lib/model/buildings'
 import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship} from './lib/model/battle-math'
+import {BUILDINGS, changeBuildingLevel} from './lib/model/buildings'
 import {calculatePlayerAttackImmunity} from './lib/model/war'
 import {calcWallArcherBonus, calcUnitSum} from './lib/model/units'
 import {HOUR, MINUTE, DAY} from './lib/unix-time'
@@ -14,8 +15,6 @@ import * as wdSets from './lib/wikidata-sets'
 
 import {EMOJI} from './lib/interface/emoji'
 import {wikidataInfoHeader} from './lib/interface/generals'
-
-const BUILDING_TARGETS: readonly Building[] = ['placeOfWorship', 'barracks', 'farm']
 
 const ATTACK_INTERVAL = 30 * MINUTE
 // Rotate around the day to ensure all timezones are equally "happy"
@@ -104,19 +103,23 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 			session.resources = {...ZERO_RESOURCES}
 			session.resourcesTimestamp = now
 
-			for (const targetBuilding of BUILDING_TARGETS) {
-				if (session.buildings[targetBuilding] > 0) {
-					text += '\n\n'
-					text += EMOJI.fire
-					text += EMOJI[targetBuilding]
-					text += ' -1 '
-					// eslint-disable-next-line no-await-in-loop
-					text += (await twb.reader(`construction.${targetBuilding}`, languageCode)).label()
+			const targetBuilding = randomItem(BUILDINGS.filter(o => session.buildings[o] > 0))
+			if (targetBuilding) {
+				const currentLevel = session.buildings[targetBuilding]
+				// Reduce randomly between 1 and 10 but max 10% of the building level
+				const maxReduction = Math.min(10, Math.ceil(currentLevel / 10))
+				// Reduce at least 1
+				const reduction = Math.ceil(Math.random() * maxReduction)
 
-					session.buildings = changeBuildingLevel(session.buildings, targetBuilding, before => before - 1)
+				text += '\n\n'
+				text += EMOJI.fire
+				text += EMOJI[targetBuilding]
+				text += ' -'
+				text += reduction
+				text += ' '
+				text += (await twb.reader(`construction.${targetBuilding}`, languageCode)).label()
 
-					break
-				}
+				session.buildings = changeBuildingLevel(session.buildings, targetBuilding, before => before - reduction)
 			}
 		}
 
