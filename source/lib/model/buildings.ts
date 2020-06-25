@@ -47,11 +47,11 @@ const FACTORS: Readonly<Record<Building, Resources>> = {
 	townhall: {food: 2000, wood: 1500, loam: 1500, stone: 1000, iron: 500},
 	marketplace: {food: 1000, wood: 800, loam: 400, stone: 200, iron: 50},
 	storage: {food: 300, wood: 550, loam: 550, stone: 350, iron: 150},
-	sawmill: {food: 40, wood: 10, loam: 40, stone: 1, iron: 1},
-	loampit: {food: 40, wood: 40, loam: 10, stone: 1, iron: 1},
-	quarry: {food: 50, wood: 40, loam: 20, stone: 5, iron: 5},
-	mine: {food: 60, wood: 40, loam: 40, stone: 20, iron: 10},
-	farm: {food: 0, wood: 30, loam: 30, stone: 3, iron: 3},
+	sawmill: {food: 60, wood: 20, loam: 100, stone: 3, iron: 2},
+	loampit: {food: 60, wood: 100, loam: 20, stone: 8, iron: 1},
+	quarry: {food: 80, wood: 100, loam: 60, stone: 10, iron: 5},
+	mine: {food: 100, wood: 100, loam: 100, stone: 50, iron: 20},
+	farm: {food: 0, wood: 100, loam: 100, stone: 10, iron: 5},
 	barracks: {food: 500, wood: 400, loam: 200, stone: 10, iron: 100},
 	wall: {food: 500, wood: 400, loam: 400, stone: 700, iron: 300},
 	placeOfWorship: {food: 5000, wood: 5000, loam: 5000, stone: 3500, iron: 1000}
@@ -73,22 +73,22 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 	switch (building) {
 		case 'townhall':
 			return {
-				food: 10 * nextLevel,
-				wood: 6 * nextLevel,
-				loam: 6 * nextLevel,
-				stone: 2 * nextLevel,
-				iron: nextLevel
+				food: 30 * nextLevel,
+				wood: 10 * nextLevel,
+				loam: 10 * nextLevel,
+				stone: 5 * nextLevel,
+				iron: 2 * nextLevel
 			}
 		case 'farm':
-			return {...ZERO_RESOURCES, food: currentLevel * 10}
+			return {...ZERO_RESOURCES, food: currentLevel * 20}
 		case 'sawmill':
-			return {...ZERO_RESOURCES, wood: currentLevel * 8, food: currentLevel * -2}
+			return {...ZERO_RESOURCES, wood: currentLevel * 15, food: currentLevel * -2}
 		case 'loampit':
-			return {...ZERO_RESOURCES, loam: currentLevel * 8, food: currentLevel * -2}
+			return {...ZERO_RESOURCES, loam: currentLevel * 15, food: currentLevel * -2}
 		case 'quarry':
-			return {...ZERO_RESOURCES, stone: currentLevel * 5, food: currentLevel * -3}
+			return {...ZERO_RESOURCES, stone: currentLevel * 8, food: currentLevel * -3}
 		case 'mine':
-			return {...ZERO_RESOURCES, iron: currentLevel * 2, food: currentLevel * -5}
+			return {...ZERO_RESOURCES, iron: currentLevel * 3, food: currentLevel * -5}
 		default:
 			return {...ZERO_RESOURCES, food: currentLevel * -1}
 	}
