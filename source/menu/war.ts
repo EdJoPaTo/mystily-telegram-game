@@ -124,11 +124,9 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 
 		calcBattle(attackerArmy, defenderArmy)
 
+		const attackerWins = defenderArmy.filter(o => o.remainingHealth > 0).length === 0
 		attacker.barracksUnits = remainingBarracksUnits(attackerArmy)
 		target.barracksUnits = remainingBarracksUnits(defenderArmy)
-
-		const amountTargetUnits = calcUnitSum(target.barracksUnits)
-		const attackerWins = amountTargetUnits === 0
 
 		const currentFatigueSeconds = Math.max(0, ctx.session.battleFatigueEnd ? ctx.session.battleFatigueEnd - now : 0)
 		const {cooldownSeconds, newFatigueSeconds} = calculateBattleFatigue(currentFatigueSeconds)
