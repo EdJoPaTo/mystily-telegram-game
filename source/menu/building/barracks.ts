@@ -1,17 +1,19 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcUnitSum, PLAYER_BARRACKS_ARMY_TYPES, BarracksArmyType, UNIT_COST} from '../../lib/model/units'
+import {calcUnitSum, PLAYER_BARRACKS_ARMY_TYPES, BarracksArmyType, UNIT_COST, ZERO_BARRACKS_UNITS} from '../../lib/model/units'
 import {calcBarracksMaxPeople, calcBuildingCost} from '../../lib/model/buildings'
 import {Context} from '../../lib/context'
 import * as resourceMath from '../../lib/model/resource-math'
 
 import {backButtons} from '../../lib/interface/menu'
 import {EMOJI} from '../../lib/interface/emoji'
-import {generateUnitDetailsAndCostPart, recruitButtonText} from '../../lib/interface/units'
+import {generateUnitDetailsAndCostPart} from '../../lib/interface/units'
 import {infoHeader} from '../../lib/interface/construction'
 import {upgradeResourcesPart} from '../../lib/interface/resource'
 
 import {constructionFromCtx, addUpgradeButton} from './generic-helper'
+
+const NUMERIC_ADD_BUTTONS: readonly number[] = [1, 5, 25]
 
 export const menu = new MenuTemplate<Context>(constructionBody)
 
@@ -38,24 +40,12 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 	return {text, parse_mode: 'Markdown'}
 }
 
-menu.choose('recruit', canRecruitOptions, {
-	columns: 1,
-	hide: ctx => calcUnitSum(ctx.session.barracksUnits) >= calcBarracksMaxPeople(ctx.session.buildings.barracks),
-	buttonText: async (ctx, key) => recruitButtonText(ctx, key as BarracksArmyType),
-	do: (ctx, key) => {
-		const armyType = key as BarracksArmyType
-		ctx.session.resources = resourceMath.subtract(ctx.session.resources, UNIT_COST[armyType])
-
-		const raw: number | undefined = ctx.session.barracksUnits[armyType]
-		const currentAmount = Number.isFinite(raw) ? raw : 0
-		ctx.session.barracksUnits = {
-			...ctx.session.barracksUnits,
-			[armyType]: currentAmount + 1
-		}
-
-		return '.'
-	}
-})
+for (const armyType of PLAYER_BARRACKS_ARMY_TYPES) {
+	menu.choose(armyType, createRecruitOptionsFunction(armyType), {
+		columns: 6,
+		do: createRecruitDoFunction(armyType)
+	})
+}
 
 addUpgradeButton(menu)
 
@@ -67,16 +57,52 @@ menu.url(async ctx => `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label
 
 menu.manualRow(backButtons)
 
-async function canRecruitOptions(ctx: Context): Promise<readonly string[]> {
-	const canBeRecruited: string[] = []
-	const currentResources = ctx.session.resources
-
-	for (const armyType of PLAYER_BARRACKS_ARMY_TYPES) {
-		const cost = UNIT_COST[armyType]
-		if (resourceMath.isEnough(currentResources, cost)) {
-			canBeRecruited.push(armyType)
+function createRecruitOptionsFunction(armyType: BarracksArmyType): (context: Context) => Record<string, string> {
+	return context => {
+		const freeSpots = calcBarracksMaxPeople(context.session.buildings.barracks) - calcUnitSum(context.session.barracksUnits)
+		if (freeSpots <= 0) {
+			return {}
 		}
-	}
 
-	return canBeRecruited
+		const enoughResourceFor = resourceMath.enoughFor(context.session.resources, UNIT_COST[armyType])
+		const canRecruit = Math.max(0, Math.min(freeSpots, enoughResourceFor))
+
+		const result: Record<string, string> = {}
+
+		for (const amount of NUMERIC_ADD_BUTTONS) {
+			if (canRecruit > amount) {
+				result[amount] = `+${amount} ${EMOJI[armyType]}`
+			}
+		}
+
+		result.max = `+${canRecruit} ${EMOJI[armyType]}`
+
+		return result
+	}
+}
+
+function createRecruitDoFunction(armyType: BarracksArmyType): (context: Context, key: string) => true {
+	return (context, key) => {
+		const wantedAmount = key === 'max' ? Infinity : Number(key)
+
+		const freeSpots = calcBarracksMaxPeople(context.session.buildings.barracks) - calcUnitSum(context.session.barracksUnits)
+		const enoughResourceFor = resourceMath.enoughFor(context.session.resources, UNIT_COST[armyType])
+		const canRecruit = Math.max(0, Math.min(freeSpots, enoughResourceFor))
+
+		const amount = Math.min(wantedAmount, canRecruit)
+
+		const raw: number | undefined = context.session.barracksUnits[armyType]
+		const currentAmount = Number.isFinite(raw) ? raw : 0
+
+		const totalCost = resourceMath.multiply(UNIT_COST[armyType], amount)
+		context.session.resources = resourceMath.subtract(context.session.resources, totalCost)
+
+		context.session.barracksUnits = {
+			...ZERO_BARRACKS_UNITS,
+			...context.session.barracksUnits,
+			[armyType]: currentAmount + amount
+		}
+
+		return true
+	}
 }

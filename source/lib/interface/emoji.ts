@@ -55,7 +55,6 @@ export const EMOJI = {
 	nameUnisex: '💁',
 	possibleNo: '⛔️',
 	possibleYes: '✅',
-	recruit: '🎽',
 	statistics: '📊',
 	suicide: '😵',
 	win: '🎉',

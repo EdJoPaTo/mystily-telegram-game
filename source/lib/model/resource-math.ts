@@ -29,3 +29,9 @@ export function sum(...parts: readonly Resources[]): Resources {
 export function subtract(subtrahend: Resources, minuend: Resources): Resources {
 	return joinTwoRecords((a, b) => a - b, subtrahend, minuend)
 }
+
+export function enoughFor(has: Resources, one: Resources): number {
+	const ofResource = reduce((a, b) => a / b, has, one)
+	const min = Math.min(...RESOURCES.map(r => ofResource[r]))
+	return Math.floor(min)
+}

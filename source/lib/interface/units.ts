@@ -41,12 +41,6 @@ export async function generateUnitDetailsAndCostPart(ctx: Context, armyType: Bar
 	return detailsPart + '\n' + costPart
 }
 
-export async function recruitButtonText(ctx: Context, armyType: BarracksArmyType): Promise<string> {
-	const readerArmy = await ctx.wd.reader('army.' + armyType)
-	const readerRecruit = await ctx.wd.reader('action.recruit')
-	return EMOJI.recruit + readerRecruit.label() + ' ' + EMOJI[armyType] + readerArmy.label()
-}
-
 function generateUnitAmountString(armyType: ArmyType, amount: number): string {
 	return `${amount}${EMOJI[armyType]}`
 }
