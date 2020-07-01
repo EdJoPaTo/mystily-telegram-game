@@ -31,16 +31,15 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += wikidataInfoHeader(await ctx.wd.reader('menu.war'), {titlePrefix: EMOJI.war})
 	text += '\n\n'
 
-	for (const unit of PLAYER_BARRACKS_ARMY_TYPES) {
-		// eslint-disable-next-line no-await-in-loop
-		text += (await ctx.wd.reader(`army.${unit}`)).label()
-		text += ': '
-		text += formatNumberShort(ctx.session.barracksUnits[unit], true)
-		text += EMOJI[unit]
-		text += '\n'
-	}
-
-	text += '\n'
+	const unitLines = await Promise.all(PLAYER_BARRACKS_ARMY_TYPES
+		.map(async unit => {
+			const reader = await ctx.wd.reader(`army.${unit}`)
+			const amount = ctx.session.barracksUnits[unit]
+			return `${reader.label()}: ${formatNumberShort(amount, true)}${EMOJI[unit]}`
+		})
+	)
+	text += unitLines.join('\n')
+	text += '\n\n'
 
 	if (ctx.session.attackTarget) {
 		const attackTarget = userSessions.getUser(ctx.session.attackTarget)
