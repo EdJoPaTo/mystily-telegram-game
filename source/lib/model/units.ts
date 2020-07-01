@@ -16,6 +16,10 @@ export interface Attack {
 	readonly strength: number;
 }
 
+export function isBarracksArmyType(type: ArmyType): type is BarracksArmyType {
+	return (PLAYER_BARRACKS_ARMY_TYPES as string[]).includes(type)
+}
+
 export const BLOCK_CHANCE: Readonly<Record<ArmyType, BlockChance>> = {
 	villager: {melee: 0.1, ranged: 0.1, mystical: 0.35},
 	archer: {melee: 0.2, ranged: 0.6, mystical: 0.1},
@@ -48,6 +52,13 @@ export const UNIT_COST: Readonly<Record<BarracksArmyType, Resources>> = {
 	archer: {food: 500, wood: 500, loam: 100, stone: 0, iron: 50},
 	swordfighter: {food: 1500, wood: 200, loam: 400, stone: 200, iron: 800},
 	wagon: {food: 500, wood: 2000, loam: 0, stone: 0, iron: 250}
+}
+
+export const UNIT_LOOT_CAPACITY: Readonly<Record<BarracksArmyType, number>> = {
+	villager: 50,
+	archer: 20,
+	swordfighter: 70,
+	wagon: 400
 }
 
 export type BarracksUnits = Readonly<Record<BarracksArmyType, number>>

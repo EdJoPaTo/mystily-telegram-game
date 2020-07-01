@@ -6,6 +6,10 @@ export function isEnough(has: Resources, need: Resources): boolean {
 	return RESOURCES.every(r => has[r] >= need[r])
 }
 
+export function areAny(amount: Resources): boolean {
+	return RESOURCES.some(r => amount[r] > 0)
+}
+
 export function apply(func: (amount: number, resource: Resource) => number, o: Resources): Resources {
 	return applyOnEachRecordKey(func, o)
 }

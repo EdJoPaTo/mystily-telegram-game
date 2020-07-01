@@ -53,13 +53,15 @@ function calcCurrentResources(session: Session, now: number): void {
 	}
 }
 
+export function updateSession(session: Session, now: number): void {
+	initWhenMissing(session, now)
+	calcCurrentResources(session, now)
+}
+
 export function middleware(): (ctx: Context, next: () => Promise<void>) => Promise<void> {
 	return async (ctx, next) => {
 		const now = Date.now() / 1000
-
-		initWhenMissing(ctx.session, now)
-		calcCurrentResources(ctx.session, now)
-
+		updateSession(ctx.session, now)
 		return next()
 	}
 }

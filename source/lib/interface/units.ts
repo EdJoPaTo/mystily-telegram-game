@@ -1,5 +1,5 @@
 import {Army} from '../model/battle-math'
-import {BarracksArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST, ArmyType, PLAYER_ARMY_TYPES} from '../model/units'
+import {BarracksArmyType, BASE_ATTACK, BASE_HEALTH, BLOCK_CHANCE, WEAPON_TYPES, UNIT_COST, ArmyType, PLAYER_ARMY_TYPES, UNIT_LOOT_CAPACITY, isBarracksArmyType} from '../model/units'
 import {Context} from '../context'
 
 import {costResourcesPart} from './resource'
@@ -12,16 +12,20 @@ export async function generateUnitDetailsPart(ctx: Context, armyType: ArmyType, 
 	const attack = BASE_ATTACK[armyType]
 	const block = BLOCK_CHANCE[armyType]
 	const health = BASE_HEALTH[armyType]
+	const loot = isBarracksArmyType(armyType) ? UNIT_LOOT_CAPACITY[armyType] : Number.NaN
 
 	let text = ''
 	text += wikidataInfoHeader(reader, {titlePrefix: `${amount}x ${EMOJI[armyType]}`})
 
 	text += '\n'
-	text +=	attack.strength
-	text += EMOJI[attack.type]
-	text += '  '
-	text += health
-	text += EMOJI.health
+	const firstLine: string[] = []
+	firstLine.push(`${attack.strength}${EMOJI[attack.type]}`)
+	firstLine.push(`${health}${EMOJI.health}`)
+	if (Number.isFinite(loot)) {
+		firstLine.push(`${loot}${EMOJI.loot}`)
+	}
+
+	text += firstLine.join('  ')
 
 	text += '\n'
 	text += WEAPON_TYPES

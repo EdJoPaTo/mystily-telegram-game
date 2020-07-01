@@ -4,6 +4,13 @@ import {Resource, Resources, RESOURCES} from '../model/resources'
 import {formatNumberShort} from './format-number'
 import {EMOJI, possibleEmoji} from './emoji'
 
+export function resourceSingleLine(resources: Resources): string {
+	return RESOURCES
+		.filter(o => resources[o] > 0)
+		.map(resource => formatNumberShort(resources[resource], true) + EMOJI[resource])
+		.join('  ')
+}
+
 export async function currentResourceLine(ctx: Context, resource: Resource, amount: number, capacity: number): Promise<string> {
 	const reader = await ctx.wd.reader(`resource.${resource}`)
 	const parts: string[] = []

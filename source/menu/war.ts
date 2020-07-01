@@ -2,9 +2,12 @@ import {MenuTemplate, Body, resendMenuToContext} from 'telegraf-inline-menu'
 import {html as format} from 'telegram-format'
 
 import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army} from '../lib/model/battle-math'
-import {calculateBattleFatigue, calculatePlayerAttackImmunity} from '../lib/model/war'
+import {calculateBattleFatigue, calculatePlayerAttackImmunity, calculateLoot} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
 import {PLAYER_BARRACKS_ARMY_TYPES, calcWallArcherBonus, ZERO_BARRACKS_UNITS, calcUnitSum} from '../lib/model/units'
+import {Resources, ZERO_RESOURCES} from '../lib/model/resources'
+import {updateSession} from '../lib/session-state-math'
+import * as resourceMath from '../lib/model/resource-math'
 import * as userSessions from '../lib/user-sessions'
 
 import {backButtons} from '../lib/interface/menu'
@@ -13,6 +16,7 @@ import {formatCooldown} from '../lib/interface/format-time'
 import {formatNamePlain} from '../lib/interface/name'
 import {formatNumberShort} from '../lib/interface/format-number'
 import {generateArmyOneLine} from '../lib/interface/units'
+import {resourceSingleLine} from '../lib/interface/resource'
 import {wikidataInfoHeader} from '../lib/interface/generals'
 
 function battleReportPart(emoji: string, name: Name, army: Army): string {
@@ -102,6 +106,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 
 		const targetId = ctx.session.attackTarget!
 		const target = userSessions.getUser(targetId)!
+		updateSession(target, now)
 		const targetWallBonus = calcWallArcherBonus(target.buildings.wall)
 
 		delete ctx.session.attackTarget
@@ -133,6 +138,13 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		ctx.session.battleCooldownEnd = now + cooldownSeconds
 		ctx.session.battleFatigueEnd = now + newFatigueSeconds
 
+		let loot: Resources = ZERO_RESOURCES
+		if (attackerWins) {
+			loot = calculateLoot(attacker.barracksUnits, target.resources)
+			attacker.resources = resourceMath.sum(attacker.resources, loot)
+			target.resources = resourceMath.subtract(target.resources, loot)
+		}
+
 		target.immuneToPlayerAttacksUntil = calculatePlayerAttackImmunity(now)
 
 		const textParts: string[] = []
@@ -141,7 +153,11 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		textParts.push(EMOJI.war + EMOJI.war + EMOJI.war)
 		textParts.push(battleReportPart(attackerWins ? EMOJI.win : EMOJI.lose, attacker.name!, attackerArmy.filter(o => o.remainingHealth > 0)))
 		textParts.push(battleReportPart(attackerWins ? EMOJI.lose : EMOJI.win, target.name!, defenderArmy.filter(o => o.remainingHealth > 0)))
-		textParts.push('lazy dev… no loot yet…')
+
+		if (resourceMath.areAny(loot)) {
+			textParts.push(EMOJI.loot + '  ' + resourceSingleLine(loot))
+		}
+
 		const text = textParts.map(o => o.trim()).join('\n\n')
 
 		await ctx.reply(text, {parse_mode: format.parse_mode})

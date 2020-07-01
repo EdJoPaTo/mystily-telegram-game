@@ -39,6 +39,7 @@ export const EMOJI = {
 	melee: '✊',
 	ranged: '🎯',
 	mystical: '🌈',
+	loot: '🧺',
 
 	activeUser: '🥰',
 	betrayal: '😈',
