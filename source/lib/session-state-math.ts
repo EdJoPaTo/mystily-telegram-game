@@ -31,26 +31,24 @@ function initWhenMissing(session: Session, now: number): void {
 
 function calcCurrentResources(session: Session, now: number): void {
 	const totalSeconds = now - session.resourcesTimestamp
-	const totalMinutes = Math.floor(totalSeconds / MINUTE)
+	const totalMinutes = totalSeconds / MINUTE
 
-	if (totalMinutes > 0) {
-		const incomePerMinute = resourceMath.sum(
-			...BUILDINGS.map(building => calcResourceIncomeFromBuilding(building, session.buildings[building]))
-		)
-		const totalIncome = resourceMath.multiply(incomePerMinute, totalMinutes)
+	const incomePerMinute = resourceMath.sum(
+		...BUILDINGS.map(building => calcResourceIncomeFromBuilding(building, session.buildings[building]))
+	)
+	const totalIncome = resourceMath.multiply(incomePerMinute, totalMinutes)
 
-		const withIncome = resourceMath.sum(
-			session.resources,
-			totalIncome
-		)
+	const withIncome = resourceMath.sum(
+		session.resources,
+		totalIncome
+	)
 
-		const storageCapacity = calcStorageCapacity(session.buildings.storage)
-		session.resources = resourceMath.apply(
-			(amount, resource) => ensureBetweenFinite(0, storageCapacity[resource], Math.round(amount)),
-			withIncome
-		)
-		session.resourcesTimestamp = now
-	}
+	const storageCapacity = calcStorageCapacity(session.buildings.storage)
+	session.resources = resourceMath.apply(
+		(amount, resource) => ensureBetweenFinite(0, storageCapacity[resource], Math.round(amount)),
+		withIncome
+	)
+	session.resourcesTimestamp = now
 }
 
 export function updateSession(session: Session, now: number): void {
