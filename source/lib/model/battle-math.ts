@@ -43,7 +43,8 @@ export function remainingBarracksUnits(army: Army): BarracksUnits {
 	return {
 		archer: sane.filter(o => o.type === 'archer').length,
 		swordfighter: sane.filter(o => o.type === 'swordfighter').length,
-		villager: sane.filter(o => o.type === 'villager').length
+		villager: sane.filter(o => o.type === 'villager').length,
+		wagon: sane.filter(o => o.type === 'wagon').length
 	}
 }
 

@@ -46,9 +46,11 @@ menu.choose('recruit', canRecruitOptions, {
 		const armyType = key as BarracksArmyType
 		ctx.session.resources = resourceMath.subtract(ctx.session.resources, UNIT_COST[armyType])
 
+		const raw: number | undefined = ctx.session.barracksUnits[armyType]
+		const currentAmount = Number.isFinite(raw) ? raw : 0
 		ctx.session.barracksUnits = {
 			...ctx.session.barracksUnits,
-			[armyType]: ctx.session.barracksUnits[armyType] + 1
+			[armyType]: currentAmount + 1
 		}
 
 		return '.'
