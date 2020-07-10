@@ -44,17 +44,17 @@ export const ZERO_BUILDINGS: Buildings = {
 }
 
 const FACTORS: Readonly<Record<Building, Resources>> = {
-	townhall: {food: 2000, wood: 1500, loam: 1500, stone: 1000, iron: 500},
-	marketplace: {food: 1000, wood: 800, loam: 400, stone: 200, iron: 50},
-	storage: {food: 600, wood: 800, loam: 800, stone: 400, iron: 200},
-	sawmill: {food: 100, wood: 40, loam: 150, stone: 5, iron: 3},
-	loampit: {food: 100, wood: 150, loam: 40, stone: 15, iron: 1},
-	quarry: {food: 120, wood: 150, loam: 80, stone: 10, iron: 5},
-	mine: {food: 140, wood: 200, loam: 200, stone: 70, iron: 30},
-	farm: {food: 0, wood: 180, loam: 180, stone: 10, iron: 5},
-	barracks: {food: 500, wood: 400, loam: 200, stone: 10, iron: 100},
-	wall: {food: 500, wood: 400, loam: 400, stone: 700, iron: 300},
-	placeOfWorship: {food: 5000, wood: 5000, loam: 5000, stone: 3500, iron: 1000}
+	townhall: {food: 6000, wood: 4500, loam: 4500, stone: 3000, iron: 1500},
+	marketplace: {food: 3000, wood: 2400, loam: 1200, stone: 600, iron: 150},
+	storage: {food: 2500, wood: 3000, loam: 3000, stone: 1500, iron: 800},
+	sawmill: {food: 300, wood: 100, loam: 450, stone: 15, iron: 10},
+	loampit: {food: 300, wood: 450, loam: 100, stone: 50, iron: 3},
+	quarry: {food: 350, wood: 450, loam: 250, stone: 30, iron: 15},
+	mine: {food: 400, wood: 600, loam: 600, stone: 150, iron: 80},
+	farm: {food: 0, wood: 500, loam: 500, stone: 30, iron: 15},
+	barracks: {food: 1500, wood: 1200, loam: 600, stone: 50, iron: 300},
+	wall: {food: 1500, wood: 1200, loam: 1200, stone: 2100, iron: 900},
+	placeOfWorship: {food: 15000, wood: 15000, loam: 15000, stone: 10000, iron: 3000}
 }
 
 export function calcBuildingCost(building: Building, currentLevel: number): Resources {
@@ -97,11 +97,11 @@ export function calcResourceIncomeFromBuilding(building: Building, currentLevel:
 export function calcStorageCapacity(currentLevel: number): Resources {
 	const factor = currentLevel + 1
 	return {
-		food: factor * 1600,
-		wood: factor * 1200,
-		loam: factor * 1200,
-		stone: factor * 800,
-		iron: factor * 400
+		food: factor * 5000,
+		wood: factor * 4000,
+		loam: factor * 4000,
+		stone: factor * 2000,
+		iron: factor * 1000
 	}
 }
 
