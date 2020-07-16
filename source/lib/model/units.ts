@@ -78,8 +78,9 @@ export function calcMaxPeoplePerBarracks(currentBarracksLevel: number): number {
 	return currentBarracksLevel * 10
 }
 
-export function calcUnitSum(barracksUnits: Partial<BarracksUnits>): number {
-	return PLAYER_BARRACKS_ARMY_TYPES
-		.map(o => barracksUnits[o] ?? 0)
-		.reduce((a, b) => a + b)
+export function calcUnitSum(units: Readonly<Record<string, number>>): number {
+	return Object.keys(units)
+		.map(key => units[key])
+		.filter(num => typeof num === 'number' && Number.isFinite(num))
+		.reduce((a, b) => a + b, 0)
 }
