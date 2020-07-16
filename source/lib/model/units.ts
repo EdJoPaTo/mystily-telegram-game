@@ -80,6 +80,6 @@ export function calcMaxPeoplePerBarracks(currentBarracksLevel: number): number {
 export function calcUnitSum(units: Readonly<Record<string, number>>): number {
 	return Object.keys(units)
 		.map(key => units[key])
-		.filter(num => typeof num === 'number' && Number.isFinite(num))
+		.filter(amount => typeof amount === 'number' && Number.isFinite(amount))
 		.reduce((a, b) => a + b, 0)
 }
