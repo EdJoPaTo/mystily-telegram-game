@@ -27,7 +27,7 @@ export const BLOCK_CHANCE: Readonly<Record<ArmyType, BlockChance>> = {
 	wagon: {melee: 0, ranged: 0, mystical: 0},
 	cleric: {melee: 0.1, ranged: 0.5, mystical: 0.8},
 	wallguard: {melee: 0.6, ranged: 0.6, mystical: 0},
-	mystic: {melee: 0.9, ranged: 0.9, mystical: 0.1}
+	mystic: {melee: 0.95, ranged: 0.95, mystical: 0.1}
 }
 
 export const BASE_HEALTH: Readonly<Record<ArmyType, number>> = {

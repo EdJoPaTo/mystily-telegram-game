@@ -25,7 +25,7 @@ function calcMysticStrength(mystic: QNumber): number {
 		.map(o => Number(o))
 
 	const baseStrength = numbersOfQNumber.reduce((a, b) => a + b, 0)
-	return baseStrength * 200
+	return baseStrength * 250
 }
 
 export function getMysticAsArmy(remainingHealth: number, amountFactor: number): Army {
