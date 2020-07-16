@@ -1,10 +1,8 @@
 import {Building, Buildings, calcStorageCapacity} from '../model/buildings'
-import {calcWallArcherBonus} from '../model/units'
 import {Context} from '../context'
 
 import {currentResourcesPart} from './resource'
 import {EMOJI, possibleEmoji} from './emoji'
-import {formatBonusPercentage} from './format-number'
 import {wikidataInfoHeader} from './generals'
 
 export async function constructionLine(ctx: Context, construction: Building, level: number, canUpgrade: boolean): Promise<string> {
@@ -41,9 +39,7 @@ export async function constructionPropertyString(ctx: Context, buildings: Buildi
 	}
 
 	if (building === 'wall') {
-		const archerBonus = calcWallArcherBonus(buildings.wall)
-		const readerArcher = await ctx.wd.reader('army.archer')
-		return readerArcher.label() + ' ' + formatBonusPercentage(archerBonus) + EMOJI.health
+		throw new Error('has its own menu')
 	}
 
 	if (building === 'placeOfWorship') {

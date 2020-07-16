@@ -34,6 +34,7 @@ export interface Session {
 	resourcesTimestamp: UnixSeconds;
 	selectedSpy: string;
 	selectedSpyEmoji: string;
+	wallguards: number;
 }
 
 export interface Context extends TelegrafContext {

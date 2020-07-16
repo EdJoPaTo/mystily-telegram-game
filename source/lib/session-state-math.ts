@@ -27,6 +27,10 @@ function initWhenMissing(session: Session, now: number): void {
 		session.resourcesTimestamp = now
 		session.resources = {...STARTING_RESOURCES}
 	}
+
+	if (!session.wallguards) {
+		session.wallguards = 0
+	}
 }
 
 function calcCurrentResources(session: Session, now: number): void {

@@ -9,21 +9,29 @@ export interface UnitStats {
 	remainingHealth: number;
 }
 
-function unitStatsFromType(type: ArmyType, wallBonus: number): UnitStats {
+function unitStatsFromType(type: ArmyType): UnitStats {
 	return {
 		type,
 		attack: BASE_ATTACK[type],
-		remainingHealth: BASE_HEALTH[type] * wallBonus
+		remainingHealth: BASE_HEALTH[type]
 	}
 }
 
-export function armyFromBarracksUnits(barracksUnits: Partial<BarracksUnits>, wallBonus: number): Army {
+export function armyFromBarracksUnits(barracksUnits: Partial<BarracksUnits>): Army {
 	const result: UnitStats[] = []
-
 	for (const type of PLAYER_BARRACKS_ARMY_TYPES) {
 		for (let i = 0; i < (barracksUnits[type] ?? 0); i++) {
-			result.push(unitStatsFromType(type, type === 'archer' ? wallBonus : 1))
+			result.push(unitStatsFromType(type))
 		}
+	}
+
+	return result
+}
+
+export function armyFromWallGuards(wallguards: number): Army {
+	const result: UnitStats[] = []
+	for (let i = 0; i < wallguards; i++) {
+		result.push(unitStatsFromType('wallguard'))
 	}
 
 	return result
@@ -32,7 +40,7 @@ export function armyFromBarracksUnits(barracksUnits: Partial<BarracksUnits>, wal
 export function armyFromPlaceOfWorship(levelOfPlaceOfWorship: number): Army {
 	const result: UnitStats[] = []
 	for (let i = 0; i < levelOfPlaceOfWorship * 2; i++) {
-		result.push(unitStatsFromType('cleric', 1))
+		result.push(unitStatsFromType('cleric'))
 	}
 
 	return result
@@ -46,6 +54,13 @@ export function remainingBarracksUnits(army: Army): BarracksUnits {
 		villager: sane.filter(o => o.type === 'villager').length,
 		wagon: sane.filter(o => o.type === 'wagon').length
 	}
+}
+
+export function remainingWallguards(army: Army): number {
+	return army
+		.filter(o => o.remainingHealth > 0)
+		.filter(o => o.type === 'wallguard')
+		.length
 }
 
 export function calcBattle(attacker: Army, defender: Army): void {

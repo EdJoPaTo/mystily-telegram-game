@@ -3,10 +3,10 @@ import {TelegrafWikibase} from 'telegraf-wikibase'
 import {Telegram} from 'telegraf'
 import randomItem from 'random-item'
 
-import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship} from './lib/model/battle-math'
+import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, armyFromWallGuards, remainingWallguards} from './lib/model/battle-math'
 import {BUILDINGS, changeBuildingLevel} from './lib/model/buildings'
 import {calculatePlayerAttackImmunity} from './lib/model/war'
-import {calcWallArcherBonus, calcUnitSum} from './lib/model/units'
+import {calcUnitSum} from './lib/model/units'
 import {HOUR, MINUTE, DAY} from './lib/unix-time'
 import {Mystic, createMysticFromEntityId, getMysticAsArmy} from './lib/model/mystic'
 import {ZERO_RESOURCES} from './lib/model/resources'
@@ -63,7 +63,8 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		const readerMystic = await twb.reader(qNumber, languageCode)
 
 		const playerArmy = [
-			...armyFromBarracksUnits(session.barracksUnits, calcWallArcherBonus(session.buildings.wall)),
+			...armyFromBarracksUnits(session.barracksUnits),
+			...armyFromWallGuards(session.wallguards),
 			...armyFromPlaceOfWorship(session.buildings.placeOfWorship)
 		]
 		const mysticArmy = getMysticAsArmy(remainingHealth, session.buildings.barracks + session.buildings.placeOfWorship)
@@ -74,6 +75,7 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 
 		calcBattle(mysticArmy, playerArmy)
 		session.barracksUnits = remainingBarracksUnits(playerArmy)
+		session.wallguards = remainingWallguards(playerArmy)
 		session.immuneToPlayerAttacksUntil = calculatePlayerAttackImmunity(now)
 		session.lastMysticAttack = now
 		const newRemainingHealth = mysticArmy.map(o => o.remainingHealth).reduce((a, b) => a + b, 0)

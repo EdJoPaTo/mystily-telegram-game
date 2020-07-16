@@ -1,10 +1,10 @@
 import {MenuTemplate, Body, resendMenuToContext} from 'telegraf-inline-menu'
 import {html as format} from 'telegram-format'
 
-import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army} from '../lib/model/battle-math'
+import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army, armyFromWallGuards, remainingWallguards} from '../lib/model/battle-math'
 import {calculateBattleFatigue, calculatePlayerAttackImmunity, calculateLoot} from '../lib/model/war'
 import {Context, Name} from '../lib/context'
-import {PLAYER_BARRACKS_ARMY_TYPES, calcWallArcherBonus, ZERO_BARRACKS_UNITS, calcUnitSum} from '../lib/model/units'
+import {PLAYER_BARRACKS_ARMY_TYPES, ZERO_BARRACKS_UNITS, calcUnitSum} from '../lib/model/units'
 import {Resources, ZERO_RESOURCES} from '../lib/model/resources'
 import {updateSession} from '../lib/session-state-math'
 import * as resourceMath from '../lib/model/resource-math'
@@ -107,7 +107,6 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		const targetId = ctx.session.attackTarget!
 		const target = userSessions.getUser(targetId)!
 		updateSession(target, now)
-		const targetWallBonus = calcWallArcherBonus(target.buildings.wall)
 
 		delete ctx.session.attackTarget
 
@@ -121,9 +120,10 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 			return '.'
 		}
 
-		const attackerArmy = armyFromBarracksUnits(attacker.barracksUnits, 1)
+		const attackerArmy = armyFromBarracksUnits(attacker.barracksUnits)
 		const defenderArmy = [
-			...armyFromBarracksUnits(target.barracksUnits, targetWallBonus),
+			...armyFromBarracksUnits(target.barracksUnits),
+			...armyFromWallGuards(target.wallguards),
 			...armyFromPlaceOfWorship(target.buildings.placeOfWorship)
 		]
 
@@ -132,6 +132,7 @@ menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')
 		const attackerWins = defenderArmy.filter(o => o.remainingHealth > 0).length === 0
 		attacker.barracksUnits = remainingBarracksUnits(attackerArmy)
 		target.barracksUnits = remainingBarracksUnits(defenderArmy)
+		target.wallguards = remainingWallguards(defenderArmy)
 
 		const currentFatigueSeconds = Math.max(0, ctx.session.battleFatigueEnd ? ctx.session.battleFatigueEnd - now : 0)
 		const {cooldownSeconds, newFatigueSeconds} = calculateBattleFatigue(currentFatigueSeconds)
