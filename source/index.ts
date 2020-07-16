@@ -56,6 +56,15 @@ const menuMiddleware = new MenuMiddleware('/', menu)
 bot.command('start', async ctx => menuMiddleware.replyToContext(ctx))
 bot.use(menuMiddleware.middleware())
 
+bot.command('restart', async ctx => {
+	await ctx.reply('/yesimsureeverythingwillbegone')
+})
+
+bot.command('yesimsureeverythingwillbegone', async ctx => {
+	(ctx.session as any) = {}
+	await ctx.reply('-> /start')
+})
+
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)
 })
