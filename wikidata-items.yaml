@@ -42,8 +42,9 @@ battle:
   suicide: Q10737
   target: P533
 name:
-  loseLastName: Q308859
   change: Q2343619
+  freewill: Q9476
+  loseLastName: Q308859
 army:
   archer: Q890527
   army: Q37726

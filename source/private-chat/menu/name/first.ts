@@ -1,6 +1,7 @@
 import {FEMALE, UNISEX, MALE} from 'wikidata-person-names'
-import {MenuTemplate, Body} from 'telegraf-inline-menu'
+import {MenuTemplate, Body, replyMenuToContext, deleteMenuFromContext} from 'telegraf-inline-menu'
 import randomItem from 'random-item'
+import TelegrafStatelessQuestion from 'telegraf-stateless-question'
 
 import {Context, Name} from '../../../lib/context'
 import {DAY, MINUTE} from '../../../lib/unix-time'
@@ -90,6 +91,28 @@ menu.choose('random', ['female', 'unisex', 'male'], {
 		}
 
 		return '.'
+	}
+})
+
+export const nameQuestion = new TelegrafStatelessQuestion<Context>('name', async ctx => {
+	const name = ctx.message.text
+	const correctFormat = /^[a-zA-Z]{4,15}$/.test(name ?? '')
+
+	if (correctFormat) {
+		ctx.session.createFirst = name
+	} else {
+		await ctx.reply(ctx.i18n.t('name.info.firstRules'))
+	}
+
+	await replyMenuToContext(menu, ctx, '/name/first/')
+})
+
+menu.interact(async ctx => (await ctx.wd.reader('name.freewill')).label(), 'question', {
+	hide: ctx => !canChangeFirstName(ctx.session.name),
+	do: async ctx => {
+		await nameQuestion.replyWithHTML(ctx, ctx.i18n.t('name.question.first'))
+		await deleteMenuFromContext(ctx)
+		return false
 	}
 })
 

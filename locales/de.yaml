@@ -13,6 +13,10 @@ name:
   info:
     full: Andere Spieler werden dich unter deinem Namen wiedererkennen.
     first: Du kannst deinen Vornamen alle 7 Tage ändern.
+    firstRules: >
+      Dein Vorname muss aus zwischen 4 bis 15 lateinischen Buchstaben bestehen.
+
+      Dieser kann keine Platzhalter und Zahlen beinhalten.
     last: >
       Du kannst entweder eine neue Familie gründen oder einer Familie beitreten.
       Spieler mit dem selben Nachnamen halten zusammen.

@@ -12,6 +12,7 @@ import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
 
 import {bot as privateChatComposer} from './private-chat'
+import {bot as tribunalChatComposer, TRIBUNAL_CHAT} from './tribunal'
 
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
 const token = readFileSync(tokenFilePath, 'utf8').trim()

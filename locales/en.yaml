@@ -13,6 +13,10 @@ name:
   info:
     full: Your name identifies you towards other players.
     first: You can change your first name every 7 days.
+    firstRules: >
+      Your first name has to be a name consisting only out of latin letters between 4 and 15 characters.
+
+      It can not contain separators or numbers.
     last: >
       You can either create a new family or join an existing one.
       People with the same familiy name stick together.
