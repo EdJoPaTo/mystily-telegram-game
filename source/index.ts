@@ -52,6 +52,7 @@ bot.use(async (ctx, next) => {
 attackingMystics.start(bot.telegram, twb)
 
 bot.use(Composer.privateChat(privateChatComposer))
+bot.use(Composer.optional(ctx => ctx.updateType === 'poll' || ctx.chat?.id === TRIBUNAL_CHAT, tribunalChatComposer))
 
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)
