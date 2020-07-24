@@ -16,7 +16,7 @@ const localSession = new LocalSession<Session>({
 		serialize: object => JSON.stringify(object, null, '\t') + '\n',
 		deserialize: string => JSON.parse(string)
 	},
-	getSessionKey: ctx => String(ctx.from!.id)
+	getSessionKey: ctx => String(ctx.from?.id)
 })
 
 export function getRaw(): readonly SessionRawEntry[] {
