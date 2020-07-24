@@ -1,12 +1,12 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcStorageCapacity} from '../lib/model/buildings'
-import {Context} from '../lib/context'
+import {calcStorageCapacity} from '../../lib/model/buildings'
+import {Context} from '../../lib/context'
 
-import {backButtons} from '../lib/interface/menu'
-import {currentResourcesPart} from '../lib/interface/resource'
-import {EMOJI} from '../lib/interface/emoji'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {backButtons} from '../../lib/interface/menu'
+import {currentResourcesPart} from '../../lib/interface/resource'
+import {EMOJI} from '../../lib/interface/emoji'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 async function tradeMenuBody(ctx: Context): Promise<Body> {
 	let text = ''

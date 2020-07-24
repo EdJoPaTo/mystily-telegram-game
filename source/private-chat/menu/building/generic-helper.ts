@@ -1,8 +1,8 @@
 import {MenuTemplate} from 'telegraf-inline-menu'
 
-import {Building, calcBuildingCost, changeBuildingLevel} from '../../lib/model/buildings'
-import {Context} from '../../lib/context'
-import * as resourceMath from '../../lib/model/resource-math'
+import {Building, calcBuildingCost, changeBuildingLevel} from '../../../lib/model/buildings'
+import {Context} from '../../../lib/context'
+import * as resourceMath from '../../../lib/model/resource-math'
 
 export function constructionFromCtx(ctx: Context, path: string): Readonly<{building: Building; level: number}> {
 	const building = path.split('/')[2].split(':').slice(-1)[0] as Building

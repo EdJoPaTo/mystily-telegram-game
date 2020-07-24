@@ -1,13 +1,13 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from '../lib/model/buildings'
-import {Context} from '../lib/context'
-import * as resourceMath from '../lib/model/resource-math'
+import {BUILDINGS, calcResourceIncomeFromBuilding, calcStorageCapacity} from '../../lib/model/buildings'
+import {Context} from '../../lib/context'
+import * as resourceMath from '../../lib/model/resource-math'
 
-import {EMOJI, randomFamilyEmoji} from '../lib/interface/emoji'
-import {formatNamePlain} from '../lib/interface/name'
-import {currentResourcesPart, incomeResourcesPart} from '../lib/interface/resource'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {EMOJI, randomFamilyEmoji} from '../../lib/interface/emoji'
+import {formatNamePlain} from '../../lib/interface/name'
+import {currentResourcesPart, incomeResourcesPart} from '../../lib/interface/resource'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 import {menu as buildingsMenu} from './building'
 import {menu as familyMenu} from './family'

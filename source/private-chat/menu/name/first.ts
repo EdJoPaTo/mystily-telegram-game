@@ -2,10 +2,10 @@ import {FEMALE, UNISEX, MALE} from 'wikidata-person-names'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import randomItem from 'random-item'
 
-import {Context, Name} from '../../lib/context'
-import {DAY, MINUTE} from '../../lib/unix-time'
-import {formatNamePlain} from '../../lib/interface/name'
-import {EMOJI} from '../../lib/interface/emoji'
+import {Context, Name} from '../../../lib/context'
+import {DAY, MINUTE} from '../../../lib/unix-time'
+import {formatNamePlain} from '../../../lib/interface/name'
+import {EMOJI} from '../../../lib/interface/emoji'
 
 const CHANGE_EACH_SECONDS = DAY * 7
 

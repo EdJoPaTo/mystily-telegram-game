@@ -1,10 +1,10 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Context} from '../../lib/context'
+import {Context} from '../../../lib/context'
 
-import {backButtons} from '../../lib/interface/menu'
-import {EMOJI} from '../../lib/interface/emoji'
-import {formatNamePlain} from '../../lib/interface/name'
+import {backButtons} from '../../../lib/interface/menu'
+import {EMOJI} from '../../../lib/interface/emoji'
+import {formatNamePlain} from '../../../lib/interface/name'
 
 import {menu as firstMenu} from './first'
 import {menu as lastMenu} from './last'

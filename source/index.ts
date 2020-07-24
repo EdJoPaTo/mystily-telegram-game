@@ -1,8 +1,7 @@
 import {existsSync, readFileSync} from 'fs'
 
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
-import {MenuMiddleware} from 'telegraf-inline-menu'
-import {Telegraf} from 'telegraf'
+import {Telegraf, Composer} from 'telegraf'
 import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
 import TelegrafI18n from 'telegraf-i18n'
 
@@ -12,7 +11,7 @@ import * as ensureSessionContent from './lib/session-state-math'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
 
-import {menu} from './menu'
+import {bot as privateChatComposer} from './private-chat'
 
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
 const token = readFileSync(tokenFilePath, 'utf8').trim()
@@ -52,18 +51,7 @@ bot.use(async (ctx, next) => {
 
 attackingMystics.start(bot.telegram, twb)
 
-const menuMiddleware = new MenuMiddleware('/', menu)
-bot.command('start', async ctx => menuMiddleware.replyToContext(ctx))
-bot.use(menuMiddleware.middleware())
-
-bot.command('restart', async ctx => {
-	await ctx.reply('/yesimsureeverythingwillbegone')
-})
-
-bot.command('yesimsureeverythingwillbegone', async ctx => {
-	(ctx.session as any) = {}
-	await ctx.reply('-> /start')
-})
+bot.use(Composer.privateChat(privateChatComposer))
 
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)

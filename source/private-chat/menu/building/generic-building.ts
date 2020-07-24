@@ -1,12 +1,12 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcResourceIncomeFromBuilding, calcBuildingCost} from '../../lib/model/buildings'
-import {Context} from '../../lib/context'
-import {RESOURCES} from '../../lib/model/resources'
+import {calcResourceIncomeFromBuilding, calcBuildingCost} from '../../../lib/model/buildings'
+import {Context} from '../../../lib/context'
+import {RESOURCES} from '../../../lib/model/resources'
 
-import {backButtons} from '../../lib/interface/menu'
-import {upgradeResourcesPart, incomeResourcesPart} from '../../lib/interface/resource'
-import {infoHeader, constructionPropertyString} from '../../lib/interface/construction'
+import {backButtons} from '../../../lib/interface/menu'
+import {upgradeResourcesPart, incomeResourcesPart} from '../../../lib/interface/resource'
+import {infoHeader, constructionPropertyString} from '../../../lib/interface/construction'
 
 import {constructionFromCtx, addUpgradeButton} from './generic-helper'
 

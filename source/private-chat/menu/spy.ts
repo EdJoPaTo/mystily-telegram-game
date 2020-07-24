@@ -3,15 +3,15 @@ import arrayFilterUnique from 'array-filter-unique'
 import randomItem from 'random-item'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {BUILDINGS, Building} from '../lib/model/buildings'
-import {Context} from '../lib/context'
-import * as userSessions from '../lib/user-sessions'
-import * as wdSets from '../lib/wikidata-sets'
+import {BUILDINGS, Building} from '../../lib/model/buildings'
+import {Context} from '../../lib/context'
+import * as userSessions from '../../lib/user-sessions'
+import * as wdSets from '../../lib/wikidata-sets'
 
-import {backButtons} from '../lib/interface/menu'
-import {EMOJI} from '../lib/interface/emoji'
-import {formatNamePlain} from '../lib/interface/name'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {backButtons} from '../../lib/interface/menu'
+import {EMOJI} from '../../lib/interface/emoji'
+import {formatNamePlain} from '../../lib/interface/name'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 async function getSpy(ctx: Context): Promise<WikidataEntityReader> {
 	if (!ctx.session.selectedSpy) {

@@ -1,10 +1,10 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Context} from '../lib/context'
+import {Context} from '../../lib/context'
 
-import {backButtons} from '../lib/interface/menu'
-import {EMOJI} from '../lib/interface/emoji'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {backButtons} from '../../lib/interface/menu'
+import {EMOJI} from '../../lib/interface/emoji'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const localeEmoji = require('locale-emoji')

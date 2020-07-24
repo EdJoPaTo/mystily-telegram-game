@@ -1,11 +1,11 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Context} from '../lib/context'
-import {getCurrentMystic} from '../mystics-attacking'
+import {Context} from '../../lib/context'
+import {getCurrentMystic} from '../../mystics-attacking'
 
-import {backButtons} from '../lib/interface/menu'
-import {EMOJI} from '../lib/interface/emoji'
-import {wikidataInfoHeader} from '../lib/interface/generals'
+import {backButtons} from '../../lib/interface/menu'
+import {EMOJI} from '../../lib/interface/emoji'
+import {wikidataInfoHeader} from '../../lib/interface/generals'
 
 async function menuBody(ctx: Context): Promise<Body> {
 	const {qNumber, remainingHealth, maxHealth} = await getCurrentMystic()

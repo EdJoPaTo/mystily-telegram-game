@@ -1,15 +1,15 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {calcUnitSum, PLAYER_BARRACKS_ARMY_TYPES, BarracksArmyType, UNIT_COST, ZERO_BARRACKS_UNITS} from '../../lib/model/units'
-import {calcBarracksMaxPeople, calcBuildingCost} from '../../lib/model/buildings'
-import {Context} from '../../lib/context'
-import * as resourceMath from '../../lib/model/resource-math'
+import {calcUnitSum, PLAYER_BARRACKS_ARMY_TYPES, BarracksArmyType, UNIT_COST, ZERO_BARRACKS_UNITS} from '../../../lib/model/units'
+import {calcBarracksMaxPeople, calcBuildingCost} from '../../../lib/model/buildings'
+import {Context} from '../../../lib/context'
+import * as resourceMath from '../../../lib/model/resource-math'
 
-import {backButtons} from '../../lib/interface/menu'
-import {EMOJI} from '../../lib/interface/emoji'
-import {generateUnitDetailsAndCostPart} from '../../lib/interface/units'
-import {infoHeader} from '../../lib/interface/construction'
-import {upgradeResourcesPart} from '../../lib/interface/resource'
+import {backButtons} from '../../../lib/interface/menu'
+import {EMOJI} from '../../../lib/interface/emoji'
+import {generateUnitDetailsAndCostPart} from '../../../lib/interface/units'
+import {infoHeader} from '../../../lib/interface/construction'
+import {upgradeResourcesPart} from '../../../lib/interface/resource'
 
 import {constructionFromCtx, addUpgradeButton} from './generic-helper'
 

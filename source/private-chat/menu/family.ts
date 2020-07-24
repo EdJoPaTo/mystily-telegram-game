@@ -1,10 +1,10 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Context, Session} from '../lib/context'
-import {getRaw} from '../lib/user-sessions'
+import {Context, Session} from '../../lib/context'
+import {getRaw} from '../../lib/user-sessions'
 
-import {backButtons} from '../lib/interface/menu'
-import {randomFamilyEmoji, EMOJI} from '../lib/interface/emoji'
+import {backButtons} from '../../lib/interface/menu'
+import {randomFamilyEmoji, EMOJI} from '../../lib/interface/emoji'
 
 function getFamilyMembers(lastName: string): Session[] {
 	return getRaw()
