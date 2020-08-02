@@ -9,7 +9,6 @@ import {calculatePlayerAttackImmunity} from './lib/model/war'
 import {calcUnitSum} from './lib/model/units'
 import {HOUR, MINUTE, DAY} from './lib/unix-time'
 import {Mystic, createMysticFromEntityId, getMysticAsArmy} from './lib/model/mystic'
-import {ZERO_RESOURCES} from './lib/model/resources'
 import * as userSessions from './lib/user-sessions'
 import * as wdSets from './lib/wikidata-sets'
 
@@ -102,7 +101,13 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		})
 
 		if (mysticStillAlive) {
-			session.resources = {...ZERO_RESOURCES}
+			session.resources = {
+				food: Math.floor(session.resources.food * Math.random()),
+				iron: Math.floor(session.resources.iron * Math.random()),
+				loam: Math.floor(session.resources.loam * Math.random()),
+				stone: Math.floor(session.resources.stone * Math.random()),
+				wood: Math.floor(session.resources.wood * Math.random())
+			}
 			session.resourcesTimestamp = now
 
 			const targetBuilding = randomItem(BUILDINGS.filter(o => session.buildings[o] > 0))
