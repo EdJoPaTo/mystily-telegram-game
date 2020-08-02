@@ -1,31 +1,28 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Buildings, Building, BUILDINGS, calcBuildingCost} from '../../../lib/model/buildings'
+import {Building, BUILDINGS, calcMaxBuildingAmount, calcCurrentBuildingAmount} from '../../../lib/model/buildings'
 import {Context} from '../../../lib/context'
-import {isEnough} from '../../../lib/model/resource-math'
-import {Resources} from '../../../lib/model/resources'
 
 import {backButtons, wdButtonText} from '../../../lib/interface/menu'
 import {constructionLine} from '../../../lib/interface/construction'
 import {EMOJI} from '../../../lib/interface/emoji'
 import {wikidataInfoHeader} from '../../../lib/interface/generals'
 
+import {canUpgrade} from './generic-helper'
 import {menu as barracksMenu} from './barracks'
 import {menu as entryMenu} from './generic-building'
 import {menu as placeOfWorshipMenu} from './place-of-worship'
 import {menu as wallMenu} from './wall'
-
-function canUpgrade(buildings: Buildings, building: Building, currentResources: Resources): boolean {
-	const cost = calcBuildingCost(building, buildings[building])
-	return isEnough(currentResources, cost)
-}
 
 async function constructionMenuBody(ctx: Context): Promise<Body> {
 	const currentResources = ctx.session.resources
 	const {buildings} = ctx.session
 
 	let text = ''
-	text += wikidataInfoHeader(await ctx.wd.reader('menu.buildings'), {titlePrefix: EMOJI.buildings})
+	text += wikidataInfoHeader(await ctx.wd.reader('menu.buildings'), {
+		titlePrefix: EMOJI.buildings,
+		titleSuffix: `(${calcCurrentBuildingAmount(buildings)} / ${calcMaxBuildingAmount(buildings.townhall)})`
+	})
 
 	text += '\n\n'
 

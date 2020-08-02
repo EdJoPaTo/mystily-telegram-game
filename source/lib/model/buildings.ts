@@ -109,6 +109,17 @@ export function calcBarracksMaxPeople(currentLevel: number): number {
 	return currentLevel * 8
 }
 
+export function calcMaxBuildingAmount(townhallLevel: number): number {
+	return (townhallLevel + 1) * 15
+}
+
+export function calcCurrentBuildingAmount(buildings: Buildings): number {
+	return BUILDINGS
+		.filter(o => o !== 'townhall')
+		.map(o => buildings[o] ?? 0)
+		.reduce((a, b) => a + b, 0)
+}
+
 export function changeBuildingLevel(buildings: Buildings, building: Building, change: (before: number) => number): Buildings {
 	return {
 		...buildings,

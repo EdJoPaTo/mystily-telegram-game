@@ -8,12 +8,12 @@ import {backButtons} from '../../../lib/interface/menu'
 import {upgradeResourcesPart, incomeResourcesPart} from '../../../lib/interface/resource'
 import {infoHeader, constructionPropertyString} from '../../../lib/interface/construction'
 
-import {constructionFromCtx, addUpgradeButton} from './generic-helper'
+import {constructionFromContext, addUpgradeButton} from './generic-helper'
 
 export const menu = new MenuTemplate<Context>(constructionBody)
 
 async function constructionBody(ctx: Context, path: string): Promise<Body> {
-	const {building, level} = constructionFromCtx(ctx, path)
+	const {building, level} = constructionFromContext(ctx, path)
 
 	const textParts: string[] = []
 	textParts.push(await infoHeader(ctx, building, level))
@@ -40,7 +40,7 @@ async function constructionBody(ctx: Context, path: string): Promise<Body> {
 addUpgradeButton(menu)
 
 menu.url(async ctx => `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label()}`, async (ctx, path) => {
-	const {building} = constructionFromCtx(ctx, path)
+	const {building} = constructionFromContext(ctx, path)
 	const wdKey = `construction.${building}`
 	const reader = await ctx.wd.reader(wdKey)
 	return reader.url()

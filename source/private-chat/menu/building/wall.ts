@@ -8,12 +8,12 @@ import {generateUnitDetailsPart} from '../../../lib/interface/units'
 import {infoHeader} from '../../../lib/interface/construction'
 import {upgradeResourcesPart} from '../../../lib/interface/resource'
 
-import {constructionFromCtx, addUpgradeButton} from './generic-helper'
+import {constructionFromContext, addUpgradeButton} from './generic-helper'
 
 export const menu = new MenuTemplate<Context>(constructionBody)
 
 async function constructionBody(ctx: Context, path: string): Promise<Body> {
-	const {level} = constructionFromCtx(ctx, path)
+	const {level} = constructionFromContext(ctx, path)
 
 	const textParts: string[] = []
 	textParts.push(await infoHeader(ctx, 'wall', level))
