@@ -13,9 +13,9 @@ export const ZERO_RESOURCES: Resources = {
 }
 
 export const STARTING_RESOURCES: Resources = {
-	food: 200,
-	wood: 100,
-	loam: 100,
-	stone: 20,
-	iron: 5
+	food: 2000,
+	wood: 1000,
+	loam: 1000,
+	stone: 200,
+	iron: 50
 }
