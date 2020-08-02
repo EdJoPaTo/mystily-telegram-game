@@ -38,4 +38,14 @@ export function addUpgradeButton(menu: MenuTemplate<Context>): void {
 			return '.'
 		}
 	})
+
+	menu.interact(async ctx => `⬇️ ${(await ctx.wd.reader('action.deconstruct')).label()}`, 'deconstruct', {
+		joinLastRow: true,
+		hide: (ctx, path) => constructionFromContext(ctx, path).level === 0,
+		do: (ctx, path) => {
+			const {building} = constructionFromContext(ctx, path)
+			ctx.session.buildings = changeBuildingLevel(ctx.session.buildings, building, before => before - 1)
+			return '.'
+		}
+	})
 }
