@@ -1,4 +1,4 @@
-import {Building, Buildings, calcStorageCapacity} from '../model/buildings'
+import {Building, Buildings, calcStorageCapacity, calcCurrentBuildingAmount, calcMaxBuildingAmount} from '../model/buildings'
 import {Context} from '../context'
 
 import {currentResourcesPart} from './resource'
@@ -25,6 +25,15 @@ export async function infoHeader(ctx: Context, building: Building, currentLevel:
 }
 
 export async function constructionPropertyString(ctx: Context, buildings: Buildings, building: Building): Promise<string | undefined> {
+	if (building === 'townhall') {
+		const currentBuildings = calcCurrentBuildingAmount(buildings)
+		const maxBuildings = calcMaxBuildingAmount(buildings.townhall)
+
+		const buildingReader = await ctx.wd.reader('menu.buildings')
+
+		return `*${buildingReader.label()}*: ${currentBuildings} / *${maxBuildings}*`
+	}
+
 	if (building === 'storage') {
 		const storageCapacity = calcStorageCapacity(buildings.storage)
 		return currentResourcesPart(ctx, ctx.session.resources, storageCapacity)
