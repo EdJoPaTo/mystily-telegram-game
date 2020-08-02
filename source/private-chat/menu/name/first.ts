@@ -5,8 +5,9 @@ import TelegrafStatelessQuestion from 'telegraf-stateless-question'
 
 import {Context, Name} from '../../../lib/context'
 import {DAY, MINUTE} from '../../../lib/unix-time'
-import {formatNamePlain} from '../../../lib/interface/name'
 import {EMOJI} from '../../../lib/interface/emoji'
+import {formatNamePlain} from '../../../lib/interface/name'
+import * as userSessions from '../../../lib/user-sessions'
 
 const CHANGE_EACH_SECONDS = DAY * 7
 
@@ -19,6 +20,10 @@ function canChangeFirstName(name: Name | undefined): boolean {
 	const now = Date.now() / 1000
 	const nextChange = getNextChange(name)
 	return now > nextChange
+}
+
+function nameAlreadyExists(firstName: string): boolean {
+	return userSessions.getRaw().some(o => o.data.name?.first === firstName)
 }
 
 async function menuBody(ctx: Context): Promise<Body> {
@@ -57,6 +62,13 @@ async function menuBody(ctx: Context): Promise<Body> {
 		text += ctx.i18n.t('name.new.first')
 		text += ': '
 		text += ctx.session.createFirst
+
+		if (nameAlreadyExists(ctx.session.createFirst)) {
+			text += '\n\n'
+			text += EMOJI.nameExists
+			text += ' '
+			text += ctx.i18n.t('name.alreadyExists')
+		}
 	}
 
 	return {text, parse_mode: 'Markdown'}
@@ -117,7 +129,7 @@ menu.interact(async ctx => (await ctx.wd.reader('name.freewill')).label(), 'ques
 })
 
 menu.interact(ctx => `😍 ${ctx.i18n.t('name.take')}`, 'take', {
-	hide: ctx => !ctx.session.createFirst || !canChangeFirstName(ctx.session.name),
+	hide: ctx => !ctx.session.createFirst || !canChangeFirstName(ctx.session.name) || nameAlreadyExists(ctx.session.createFirst),
 	do: ctx => {
 		const now = Date.now() / 1000
 		ctx.session.name = {

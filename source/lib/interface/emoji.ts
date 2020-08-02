@@ -50,6 +50,7 @@ export const EMOJI = {
 	language: '🏳️‍🌈',
 	lose: '😭',
 	name: '👋',
+	nameExists: '🛑',
 	nameFallback: '🔮',
 	nameFemale: '💁‍♀️',
 	nameMale: '💁‍♂️',

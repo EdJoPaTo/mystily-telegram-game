@@ -1,6 +1,7 @@
 menu:
   back: back
 name:
+  alreadyExists: Someone already has your chosen name. Please find your own name.
   take: Awesome! Thats me!
   reject: Naah.
   question:
