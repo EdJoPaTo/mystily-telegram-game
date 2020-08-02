@@ -1,5 +1,6 @@
-import randomItem from 'random-item'
+import {MiddlewareFn} from 'telegraf/typings/composer'
 import LocalSession from 'telegraf-session-local'
+import randomItem from 'random-item'
 
 import {Context, Session} from './context'
 
@@ -16,7 +17,7 @@ const localSession = new LocalSession<Session>({
 		serialize: object => JSON.stringify(object, null, '\t') + '\n',
 		deserialize: string => JSON.parse(string)
 	},
-	getSessionKey: ctx => String(ctx.from?.id)
+	getSessionKey: context => String(context.from!.id)
 })
 
 export function getRaw(): readonly SessionRawEntry[] {
@@ -42,6 +43,6 @@ export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => tr
 	return randomItem(rawArray)
 }
 
-export function middleware(): (ctx: Context, next: () => Promise<void>) => void {
-	return localSession.middleware() as any
+export function middleware(): MiddlewareFn<Context> {
+	return localSession.middleware()
 }

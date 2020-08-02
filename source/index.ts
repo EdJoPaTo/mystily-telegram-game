@@ -22,17 +22,12 @@ if (process.env.NODE_ENV !== 'production') {
 	bot.use(generateUpdateMiddleware())
 }
 
-bot.use(userSessions.middleware())
-bot.use(ensureSessionContent.middleware())
-
 const i18n = new TelegrafI18n({
 	directory: 'locales',
 	defaultLanguage: 'en',
 	defaultLanguageOnMissing: true,
 	useSession: true
 })
-
-bot.use(i18n.middleware())
 
 const twb = new TelegrafWikibase({
 	contextKey: 'wd',
@@ -43,12 +38,16 @@ const twb = new TelegrafWikibase({
 const wikidataResourceKeyYaml = readFileSync('wikidata-items.yaml', 'utf8')
 twb.addResourceKeys(resourceKeysFromYaml(wikidataResourceKeyYaml))
 
-bot.use(twb.middleware())
-
-bot.use(async (ctx, next) => {
-	delete ctx.session.blocked
-	return next()
-})
+bot.use(Composer.optional(ctx => Boolean(ctx.from),
+	userSessions.middleware(),
+	ensureSessionContent.middleware(),
+	i18n.middleware(),
+	twb.middleware(),
+	async (ctx, next) => {
+		delete ctx.session.blocked
+		return next()
+	}
+))
 
 attackingMystics.start(bot.telegram, twb)
 
