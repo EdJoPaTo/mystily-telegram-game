@@ -1,5 +1,8 @@
-import {BarracksUnits, BLOCK_CHANCE, BASE_ATTACK, BASE_HEALTH, ArmyType, Attack, PLAYER_BARRACKS_ARMY_TYPES} from './units'
 import randomItem from 'random-item'
+
+import {MINUTE} from '../unix-time'
+
+import {BarracksUnits, BLOCK_CHANCE, BASE_ATTACK, BASE_HEALTH, ArmyType, Attack, PLAYER_BARRACKS_ARMY_TYPES} from './units'
 
 export type Army = readonly UnitStats[]
 
@@ -8,6 +11,8 @@ export interface UnitStats {
 	readonly attack: Attack;
 	remainingHealth: number;
 }
+
+export const BATTLE_TIME = 3 * MINUTE
 
 function unitStatsFromType(type: ArmyType): UnitStats {
 	return {

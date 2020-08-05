@@ -40,6 +40,7 @@ battle:
   betrayal: Q2166722
   cooldown: Q4925315
   fatigue: Q9690
+  inProgress: Q1415628
   suicide: Q10737
   target: P533
 name:

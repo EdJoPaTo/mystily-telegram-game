@@ -59,8 +59,15 @@ menu.manualRow(backButtons)
 
 function createRecruitOptionsFunction(armyType: BarracksArmyType): (context: Context) => Record<string, string> {
 	return context => {
+		const now = Date.now() / 1000
+
 		const freeSpots = calcBarracksMaxPeople(context.session.buildings.barracks) - calcUnitSum(context.session.barracksUnits)
 		if (freeSpots <= 0) {
+			return {}
+		}
+
+		const isCurrentlyAttacking = Boolean(context.session.attackTime && context.session.attackTime > now)
+		if (isCurrentlyAttacking) {
 			return {}
 		}
 

@@ -18,6 +18,7 @@ export interface Name {
 
 export interface Session {
 	__wikibase_language_code?: string;
+	attackTime?: UnixSeconds;
 	attackTarget?: UserId;
 	barracksUnits: BarracksUnits;
 	battleCooldownEnd?: UnixSeconds;
