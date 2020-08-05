@@ -35,3 +35,14 @@ export function enoughFor(has: Resources, one: Resources): number {
 	const min = Math.min(...RESOURCES.map(r => ofResource[r]))
 	return Math.floor(min)
 }
+
+export function getKindsOfMissingResources(has: Resources, needs: Resources): readonly Resource[] {
+	const missing: Resource[] = []
+	for (const resource of RESOURCES) {
+		if (needs[resource] > has[resource]) {
+			missing.push(resource)
+		}
+	}
+
+	return missing
+}

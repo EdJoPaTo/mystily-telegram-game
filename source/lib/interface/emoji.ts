@@ -49,6 +49,7 @@ export const EMOJI = {
 	health: '❤️',
 	language: '🏳️‍🌈',
 	lose: '😭',
+	missing: '🥺',
 	name: '👋',
 	nameExists: '🛑',
 	nameFallback: '🔮',
