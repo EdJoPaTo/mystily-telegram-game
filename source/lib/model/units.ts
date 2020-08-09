@@ -52,16 +52,16 @@ export const BASE_ATTACK: Readonly<Record<ArmyType, Attack>> = {
 
 export const UNIT_COST: Readonly<Record<BarracksArmyType, Resources>> = {
 	villager: {food: 50, wood: 20, loam: 10, stone: 0, iron: 0},
-	archer: {food: 250, wood: 200, loam: 50, stone: 0, iron: 20},
-	swordfighter: {food: 800, wood: 100, loam: 200, stone: 100, iron: 400},
+	archer: {food: 200, wood: 150, loam: 30, stone: 0, iron: 20},
+	swordfighter: {food: 400, wood: 50, loam: 100, stone: 50, iron: 300},
 	wagon: {food: 400, wood: 700, loam: 0, stone: 0, iron: 100}
 }
 
 export const UNIT_LOOT_CAPACITY: Readonly<Record<BarracksArmyType, number>> = {
-	villager: 100,
-	archer: 50,
-	swordfighter: 70,
-	wagon: 500
+	villager: 200,
+	archer: 100,
+	swordfighter: 150,
+	wagon: 800
 }
 
 export type BarracksUnits = Readonly<Record<BarracksArmyType, number>>
