@@ -71,13 +71,35 @@ menu.interact('add', 'add', {
 	}
 })
 
-// TODO: release submenu
-// TODO: Release a spy -> a random player gets this spy (ignoring the building limit!)
-menu.interact('remove all', 'remove', {
-	do: async context => {
-		context.session.spies = []
+const removeMenu = new MenuTemplate(constructionBody)
+
+function removeChoices(context: Context): string[] {
+	return context.session.spies.filter(arrayFilterUnique())
+}
+
+removeMenu.choose('', removeChoices, {
+	columns: 4,
+	buttonText: async (context, key) => {
+		const reader = await context.wd.reader(key)
+		const emoji = reader.unicodeChars()[0]
+		return '-1 ' + emoji
+	},
+	do: async (context, key) => {
+		const index = context.session.spies.lastIndexOf(key)
+		const releasedSpies = context.session.spies.splice(index, 1)
+
+		// TODO: Release a spy -> a random player gets this spy (ignoring the building limit!)
+		console.log('released spies', ...releasedSpies)
+
 		return true
 	}
+})
+
+removeMenu.manualRow(backButtons)
+
+menu.submenu('remove', 'remove', removeMenu, {
+	joinLastRow: true,
+	hide: context => context.session.spies.length === 0
 })
 
 addUpgradeButton(menu)
