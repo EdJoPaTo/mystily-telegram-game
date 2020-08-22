@@ -9,6 +9,7 @@ export type Building =
 	'placeOfWorship' |
 	'quarry' |
 	'sawmill' |
+	'spyForest' |
 	'storage' |
 	'townhall' |
 	'wall'
@@ -24,6 +25,7 @@ export const BUILDINGS: readonly Building[] = [
 	'farm',
 	'barracks',
 	'wall',
+	'spyForest',
 	'placeOfWorship'
 ]
 
@@ -38,6 +40,7 @@ export const ZERO_BUILDINGS: Buildings = {
 	placeOfWorship: 0,
 	quarry: 0,
 	sawmill: 0,
+	spyForest: 0,
 	storage: 0,
 	townhall: 0,
 	wall: 0
@@ -54,6 +57,7 @@ const FACTORS: Readonly<Record<Building, Resources>> = {
 	farm: {food: 0, wood: 500, loam: 500, stone: 30, iron: 15},
 	barracks: {food: 1500, wood: 1200, loam: 600, stone: 50, iron: 300},
 	wall: {food: 1500, wood: 1200, loam: 1200, stone: 2100, iron: 900},
+	spyForest: {food: 1500, wood: 800, loam: 800, stone: 500, iron: 0},
 	placeOfWorship: {food: 15000, wood: 15000, loam: 15000, stone: 10000, iron: 3000}
 }
 

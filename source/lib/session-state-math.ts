@@ -37,6 +37,10 @@ function initWhenMissing(session: Session, now: number): void {
 		session.resources = {...STARTING_RESOURCES}
 	}
 
+	if (!session.spies) {
+		session.spies = []
+	}
+
 	if (!session.wallguards) {
 		session.wallguards = 0
 	}

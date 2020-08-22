@@ -12,6 +12,7 @@ import {canUpgrade} from './generic-helper'
 import {menu as barracksMenu} from './barracks'
 import {menu as entryMenu} from './generic-building'
 import {menu as placeOfWorshipMenu} from './place-of-worship'
+import {menu as spyForestMenu} from './spy-forest'
 import {menu as wallMenu} from './wall'
 
 async function constructionMenuBody(ctx: Context): Promise<Body> {
@@ -56,6 +57,7 @@ menu.submenu(wdButtonText(EMOJI.farm, 'construction.farm'), 'farm', entryMenu)
 menu.submenu(wdButtonText(EMOJI.barracks, 'construction.barracks'), 'barracks', barracksMenu)
 menu.submenu(wdButtonText(EMOJI.wall, 'construction.wall'), 'wall', wallMenu, {joinLastRow: true})
 
-menu.submenu(wdButtonText(EMOJI.placeOfWorship, 'construction.placeOfWorship'), 'placeOfWorship', placeOfWorshipMenu)
+menu.submenu(wdButtonText(EMOJI.spyForest, 'construction.spyForest'), 'spyForest', spyForestMenu)
+menu.submenu(wdButtonText(EMOJI.placeOfWorship, 'construction.placeOfWorship'), 'placeOfWorship', placeOfWorshipMenu, {joinLastRow: true})
 
 menu.manualRow(backButtons)

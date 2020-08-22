@@ -6,6 +6,7 @@ import {BarracksUnits} from './model/units'
 import {Buildings} from './model/buildings'
 import {Resources} from './model/resources'
 
+type QNumber = string
 type UnixSeconds = number
 type UserId = number
 
@@ -33,8 +34,7 @@ export interface Session {
 	page?: number;
 	resources: Resources;
 	resourcesTimestamp: UnixSeconds;
-	selectedSpy?: string;
-	selectedSpyEmoji?: string;
+	spies: QNumber[];
 	wallguards: number;
 }
 

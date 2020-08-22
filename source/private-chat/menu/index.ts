@@ -14,7 +14,6 @@ import {menu as familyMenu} from './family'
 import {menu as languageMenu} from './languages'
 import {menu as mysticsMenu} from './mystic'
 import {menu as nameMenu} from './name'
-import {menu as spyMenu} from './spy'
 import {menu as statsMenu} from './stats'
 import {menu as tradeMenu} from './trade'
 import {menu as warMenu} from './war'
@@ -62,11 +61,6 @@ menu.submenu(buttonText(EMOJI.trade, 'menu.trade'), 'trade', tradeMenu, {
 })
 
 menu.submenu(buttonText(EMOJI.mystic, 'menu.mystic'), 'mystic', mysticsMenu, {
-	hide: ctx => !ctx.session.name
-})
-
-menu.submenu(buttonText(EMOJI.search, 'menu.spy'), 'spy', spyMenu, {
-	joinLastRow: true,
 	hide: ctx => !ctx.session.name
 })
 

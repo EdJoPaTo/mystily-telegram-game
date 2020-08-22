@@ -5,7 +5,6 @@ menu:
   menu: Q846925
   mystic: Q2239243
   name: Q1071027
-  spy: Q9352089
   wikidataItem: Q16222597
   buildings: Q41176
   trade: Q601401
@@ -21,6 +20,7 @@ construction:
   mine: Q820477
   barracks: Q131263
   wall: Q42948
+  spyForest: Q1363454
   placeOfWorship: Q1370598
 resource:
   food: Q2095
@@ -31,7 +31,6 @@ resource:
 action:
   attack: Q1174599
   buy: Q1369832
-  change: Q1150070
   deconstruct: Q1253258
   espionage: Q165950
   search: Q36963
@@ -61,6 +60,7 @@ unit:
   second: Q11574
 stat:
   player: Q4197743
+  spy: Q9352089
   stats: Q35308049
   name:
     family: Q101352

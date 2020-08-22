@@ -1,10 +1,13 @@
 import {html as format} from 'telegram-format'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import {Telegram} from 'telegraf'
+import arrayFilterUnique from 'array-filter-unique'
 
 import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlaceOfWorship, Army, armyFromWallGuards, remainingWallguards, BATTLE_TIME} from '../../lib/model/battle-math'
+import {BUILDINGS} from '../../lib/model/buildings'
 import {calculateBattleFatigue, calculatePlayerAttackImmunity, calculateLoot} from '../../lib/model/war'
-import {Context, Name} from '../../lib/context'
+import {Context, Name, Session} from '../../lib/context'
+import {MINUTE} from '../../lib/unix-time'
 import {PLAYER_BARRACKS_ARMY_TYPES, ZERO_BARRACKS_UNITS, calcUnitSum} from '../../lib/model/units'
 import {Resources, ZERO_RESOURCES} from '../../lib/model/resources'
 import {updateSession} from '../../lib/session-state-math'
@@ -20,6 +23,7 @@ import {generateArmyOneLine} from '../../lib/interface/units'
 import {resourceSingleLine} from '../../lib/interface/resource'
 import {wikidataInfoHeader} from '../../lib/interface/generals'
 
+type QNumber = string
 type TelegramPlayerId = number
 
 interface Battlestate {
@@ -27,6 +31,14 @@ interface Battlestate {
 	readonly targetId: TelegramPlayerId;
 	readonly attackerArmy: Army;
 }
+
+interface Spystate {
+	readonly attackerId: TelegramPlayerId;
+	readonly targetId: TelegramPlayerId;
+	readonly attackerSpies: readonly QNumber[];
+}
+
+const SPY_TIME = MINUTE
 
 function battleReportPart(emoji: string, name: Name, army: Army): string {
 	let text = ''
@@ -98,28 +110,99 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 export const menu = new MenuTemplate(menuBody)
 
-menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')).label()}`, 'attack', {
-	hide: ctx => {
+function qNumberDigitSum(qNumber: string): number {
+	return qNumber
+		.slice(1)
+		.split('')
+		.map(o => Number(o))
+		.reduce((a, b) => a + b, 0)
+}
+
+menu.interact(async context => `${EMOJI.espionage} ${(await context.wd.reader('action.espionage')).label()}`, 'spy', {
+	hide: context => {
+		if (context.session.spies.length === 0) {
+			return true
+		}
+
+		return !canInteractWithTarget(context)
+	},
+	do: async context => {
 		const now = Date.now() / 1000
-		const {attackTarget} = ctx.session
-		if (!attackTarget) {
+		const targetId = context.session.attackTarget!
+
+		context.session.attackTime = now + BATTLE_TIME
+
+		const attackerSpies = [...context.session.spies]
+		context.session.spies = []
+
+		const state: Spystate = {
+			attackerId: context.from!.id,
+			targetId,
+			attackerSpies
+		}
+
+		setTimeout(async () => handleSpies(context.tg, state), SPY_TIME * 1000)
+		return true
+	}
+})
+
+function randomBuildingOffset(): number {
+	return Math.round((Math.random() - 0.5) * 6)
+}
+
+async function handleSpies(telegram: Telegram, state: Spystate): Promise<void> {
+	const now = Date.now() / 1000
+	const {attackerId, targetId, attackerSpies} = state
+
+	const attacker = userSessions.getUser(attackerId)!
+	const target = userSessions.getUser(targetId)!
+	updateSession(attacker, now)
+	updateSession(target, now)
+
+	const totalAttackerSpies = attackerSpies.length
+	const totalDefenderSpies = target.spies.length
+	const spySuperiority = Math.ceil(totalAttackerSpies - Math.floor(totalDefenderSpies / 2))
+
+	const targetBuildings = new Set(attackerSpies
+		.map(o => qNumberDigitSum(o))
+		.map(o => BUILDINGS[o % BUILDINGS.length])
+		.filter(arrayFilterUnique())
+		.slice(0, Math.max(0, spySuperiority)))
+
+	const buildingLine = BUILDINGS
+		.filter(o => targetBuildings.has(o))
+		.map(building => {
+			const emoji = EMOJI[building]
+			const attackerLevel = attacker.buildings[building] + randomBuildingOffset()
+			const targetLevel = target.buildings[building] + randomBuildingOffset()
+			const relative = targetLevel > attackerLevel ? '↑' : '↓'
+			return emoji + relative
+		})
+		.join(' ')
+
+	let text = ''
+	text += EMOJI.espionage
+	text += ' '
+	text += buildingLine
+
+	if (!attacker.blocked) {
+		try {
+			await telegram.sendMessage(attackerId, text, {parse_mode: format.parse_mode})
+		} catch (error) {
+			console.error('send attacker spyreport failed', attackerId, error.message)
+			attacker.blocked = true
+		}
+	}
+}
+
+menu.interact(async ctx => `${EMOJI.war} ${(await ctx.wd.reader('action.attack')).label()}`, 'attack', {
+	joinLastRow: true,
+	hide: context => {
+		if (calcUnitSum(context.session.barracksUnits) === 0) {
 			return true
 		}
 
-		const isCurrentlyAttacking = Boolean(ctx.session.attackTime && ctx.session.attackTime > now)
-		const hasNoUnits = calcUnitSum(ctx.session.barracksUnits) === 0
-		const hasCooldown = ctx.session.battleCooldownEnd ? ctx.session.battleCooldownEnd > now : false
-		if (isCurrentlyAttacking || hasNoUnits || hasCooldown) {
-			return true
-		}
-
-		const targetImmuneUntil = userSessions.getUser(attackTarget)!.immuneToPlayerAttacksUntil
-		if (targetImmuneUntil > now) {
-			delete ctx.session.attackTarget
-			return true
-		}
-
-		return false
+		return !canInteractWithTarget(context)
 	},
 	do: async ctx => {
 		const now = Date.now() / 1000
@@ -195,10 +278,7 @@ async function handleBattle(telegram: Telegram, state: Battlestate): Promise<voi
 		target.barracksUnits = remainingBarracksUnits(defenderArmy)
 		target.wallguards = remainingWallguards(defenderArmy)
 
-		const currentFatigueSeconds = Math.max(0, attacker.battleFatigueEnd ? attacker.battleFatigueEnd - now : 0)
-		const {cooldownSeconds, newFatigueSeconds} = calculateBattleFatigue(currentFatigueSeconds)
-		attacker.battleCooldownEnd = now + cooldownSeconds
-		attacker.battleFatigueEnd = now + newFatigueSeconds
+		applyFatiqueAndCooldown(attacker, now)
 		delete attacker.attackTarget
 
 		let loot: Resources = ZERO_RESOURCES
@@ -258,3 +338,32 @@ menu.interact(async ctx => `${EMOJI.search} ${(await ctx.wd.reader('action.searc
 })
 
 menu.manualRow(backButtons)
+
+function canInteractWithTarget(context: Context): boolean {
+	const now = Date.now() / 1000
+	const {attackTarget} = context.session
+	if (!attackTarget) {
+		return false
+	}
+
+	const isCurrentlyAttacking = Boolean(context.session.attackTime && context.session.attackTime > now)
+	const hasCooldown = context.session.battleCooldownEnd ? context.session.battleCooldownEnd > now : false
+	if (isCurrentlyAttacking || hasCooldown) {
+		return false
+	}
+
+	const targetImmuneUntil = userSessions.getUser(attackTarget)!.immuneToPlayerAttacksUntil
+	if (targetImmuneUntil > now) {
+		delete context.session.attackTarget
+		return false
+	}
+
+	return true
+}
+
+function applyFatiqueAndCooldown(session: Session, now: number): void {
+	const currentFatigueSeconds = Math.max(0, session.battleFatigueEnd ? session.battleFatigueEnd - now : 0)
+	const {cooldownSeconds, newFatigueSeconds} = calculateBattleFatigue(currentFatigueSeconds)
+	session.battleCooldownEnd = now + cooldownSeconds
+	session.battleFatigueEnd = now + newFatigueSeconds
+}

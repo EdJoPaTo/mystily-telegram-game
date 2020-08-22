@@ -109,7 +109,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const wikidataItems: string[] = []
 	wikidataItems.push(format.bold((await ctx.wd.reader('menu.wikidataItem')).label()))
 	wikidataItems.push(await simpleStat(ctx, 'menu.mystic', wdSets.get('mystics').length))
-	wikidataItems.push(await simpleStat(ctx, 'menu.spy', wdSets.get('spies').length))
+	wikidataItems.push(await simpleStat(ctx, 'stat.spy', wdSets.get('spies').length))
 	wikidataItems.push(await simpleStat(ctx, 'stat.name.female', FEMALE.length))
 	wikidataItems.push(await simpleStat(ctx, 'stat.name.unisex', UNISEX.length))
 	wikidataItems.push(await simpleStat(ctx, 'stat.name.male', MALE.length))

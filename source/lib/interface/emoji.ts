@@ -26,6 +26,7 @@ export const EMOJI = {
 	mine: '🪔',
 	barracks: '🛡',
 	wall: '🏰',
+	spyForest: '🏕',
 	placeOfWorship: '🏛',
 
 	people: '👥',
@@ -47,6 +48,7 @@ export const EMOJI = {
 	chat: '💭',
 	fire: '🔥',
 	health: '❤️',
+	espionage: '🔭',
 	language: '🏳️‍🌈',
 	lose: '😭',
 	missing: '🥺',
