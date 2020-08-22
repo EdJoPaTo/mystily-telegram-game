@@ -54,9 +54,15 @@ async function spyInfo(context: Context, spy: string): Promise<Readonly<{label: 
 
 menu.interact('add', 'add', {
 	hide: (context, path) => {
+		const now = Date.now() / 1000
 		const {level} = constructionFromContext(context, path)
+
+		const isCurrentlyAttacking = Boolean(context.session.attackTime && context.session.attackTime > now)
+
 		const currentAmount = context.session.spies.length
-		return currentAmount >= level
+		const hasMaxSpies = currentAmount >= level
+
+		return isCurrentlyAttacking || hasMaxSpies
 	},
 	do: async context => {
 		// TODO: get spy (catch? tame? dice via question?)
