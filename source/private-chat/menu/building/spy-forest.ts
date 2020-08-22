@@ -3,6 +3,8 @@ import arrayFilterUnique from 'array-filter-unique'
 
 import {calcBuildingCost} from '../../../lib/model/buildings'
 import {Context} from '../../../lib/context'
+import {updateSession} from '../../../lib/session-state-math'
+import * as userSessions from '../../../lib/user-sessions'
 import * as wdSets from '../../../lib/wikidata-sets'
 
 import {backButtons} from '../../../lib/interface/menu'
@@ -85,11 +87,33 @@ removeMenu.choose('', removeChoices, {
 		return '-1 ' + emoji
 	},
 	do: async (context, key) => {
+		const now = Date.now() / 1000
 		const index = context.session.spies.lastIndexOf(key)
 		const releasedSpies = context.session.spies.splice(index, 1)
 
-		// TODO: Release a spy -> a random player gets this spy (ignoring the building limit!)
-		console.log('released spies', ...releasedSpies)
+		const receiver = userSessions.getRandomUser(o => o.user !== context.from!.id && !o.data.blocked)
+		if (receiver) {
+			updateSession(receiver.data, now)
+			receiver.data.spies.push(...releasedSpies)
+			const receiverLanguage = receiver.data.__wikibase_language_code ?? 'en'
+
+			const strayReader = await context.wd.reader('other.stray', receiverLanguage)
+			const spyReader = await context.wd.reader(releasedSpies[0], receiverLanguage)
+
+			let text = ''
+			text += strayReader.label()
+			text += '\n'
+			text += '+1'
+			text += ' '
+			text += spyReader.unicodeChars()[0]
+
+			try {
+				await context.telegram.sendMessage(receiver.user, text)
+			} catch (error) {
+				console.error('send got wandering spy failed', receiver.user, error.message)
+				receiver.data.blocked = true
+			}
+		}
 
 		return true
 	}
