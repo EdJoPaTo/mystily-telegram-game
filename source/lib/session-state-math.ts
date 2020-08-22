@@ -15,6 +15,15 @@ function initWhenMissing(session: Session, now: number): void {
 		session.buildings = {...ZERO_BUILDINGS}
 	}
 
+	for (const building of BUILDINGS) {
+		if (!session.buildings[building]) {
+			session.buildings = {
+				...session.buildings,
+				[building]: 0
+			}
+		}
+	}
+
 	if (!session.immuneToPlayerAttacksUntil) {
 		session.immuneToPlayerAttacksUntil = now + (2 * HOUR)
 	}
