@@ -48,15 +48,14 @@
 		"@types/node": "^14.0.5",
 		"ava": "^3.9.0",
 		"del-cli": "^3.0.1",
-		"ts-node": "^8.0.3",
-		"typescript": "^3.4.3",
-		"xo": "^0.32.0"
+		"ts-node": "^9.0.0",
+		"typescript": "^4.0.2",
+		"xo": "^0.33.0"
 	},
 	"xo": {
 		"semicolon": false,
 		"rules": {
-			"unicorn/no-reduce": "off",
-			"unicorn/no-fn-reference-in-iterator": "off"
+			"unicorn/no-reduce": "off"
 		}
 	}
 }

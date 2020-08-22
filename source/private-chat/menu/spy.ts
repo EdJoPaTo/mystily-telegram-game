@@ -47,7 +47,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const description = spyReader.description()
 
 	text += '\n\n'
-	text += `${ctx.session.selectedSpyEmoji} ${spyReader.label()}\n`
+	text += `${ctx.session.selectedSpyEmoji!} ${spyReader.label()}\n`
 	if (description) {
 		text += description
 		text += '\n'
@@ -66,7 +66,7 @@ menu.interact(async ctx => `${(await ctx.wd.reader('action.espionage')).label()}
 		const session = randomItem(possibleSessions).data
 		const name = session.name!
 
-		const spyableConstructions = getSpyableConstructions(ctx.session.selectedSpy)
+		const spyableConstructions = getSpyableConstructions(ctx.session.selectedSpy!)
 		const pickedConstructionKey = randomItem(spyableConstructions)
 		const pickedConstructionLevel = session.buildings[pickedConstructionKey]
 
@@ -101,7 +101,7 @@ menu.url(
 
 menu.url(async ctx => {
 	const spyReader = await getSpy(ctx)
-	return `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label()} ${ctx.session.selectedSpyEmoji} ${spyReader.label()}`
+	return `ℹ️ ${(await ctx.wd.reader('menu.wikidataItem')).label()} ${ctx.session.selectedSpyEmoji!} ${spyReader.label()}`
 }, async ctx => (await getSpy(ctx)).url())
 
 menu.manualRow(backButtons)

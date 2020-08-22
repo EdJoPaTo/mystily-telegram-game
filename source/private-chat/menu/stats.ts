@@ -48,7 +48,7 @@ function topLine(emoji: string, reader: WikidataEntityReader, amount: number, na
 
 	if (names.length <= 3) {
 		text += ': '
-		text += names.map(formatNamePlain).join(', ')
+		text += names.map(name => formatNamePlain(name)).join(', ')
 	}
 
 	return text

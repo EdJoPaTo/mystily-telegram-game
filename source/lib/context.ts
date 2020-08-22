@@ -33,8 +33,8 @@ export interface Session {
 	page?: number;
 	resources: Resources;
 	resourcesTimestamp: UnixSeconds;
-	selectedSpy: string;
-	selectedSpyEmoji: string;
+	selectedSpy?: string;
+	selectedSpyEmoji?: string;
 	wallguards: number;
 }
 
