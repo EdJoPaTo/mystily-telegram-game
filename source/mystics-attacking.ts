@@ -101,15 +101,6 @@ async function tryAttack(telegram: Readonly<Telegram>): Promise<void> {
 		})
 
 		if (mysticStillAlive) {
-			session.resources = {
-				food: Math.floor(session.resources.food * Math.random()),
-				iron: Math.floor(session.resources.iron * Math.random()),
-				loam: Math.floor(session.resources.loam * Math.random()),
-				stone: Math.floor(session.resources.stone * Math.random()),
-				wood: Math.floor(session.resources.wood * Math.random())
-			}
-			session.resourcesTimestamp = now
-
 			const targetBuilding = randomItem(BUILDINGS.filter(o => session.buildings[o] > 0))
 			if (targetBuilding) {
 				const currentLevel = session.buildings[targetBuilding]
