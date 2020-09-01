@@ -3,9 +3,9 @@ import {existsSync, readFileSync} from 'fs'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
 import {Telegraf, Composer} from 'telegraf'
 import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
-import TelegrafI18n from 'telegraf-i18n'
 
 import {Context} from './lib/context'
+import {i18n} from './lib/i18n'
 import * as attackingMystics from './mystics-attacking'
 import * as ensureSessionContent from './lib/session-state-math'
 import * as userSessions from './lib/user-sessions'
@@ -21,13 +21,6 @@ const bot = new Telegraf<Context>(token)
 if (process.env.NODE_ENV !== 'production') {
 	bot.use(generateUpdateMiddleware())
 }
-
-const i18n = new TelegrafI18n({
-	directory: 'locales',
-	defaultLanguage: 'en',
-	defaultLanguageOnMissing: true,
-	useSession: true
-})
 
 const twb = new TelegrafWikibase({
 	contextKey: 'wd',
