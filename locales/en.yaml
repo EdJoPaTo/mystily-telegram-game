@@ -24,6 +24,13 @@ name:
 
       If you dont like your family you can leave it and seek a new one.
       You can change your family name every 22 hours.
+spy:
+  gotSpied:
+    assume: >
+      Your spies noticed some shady animals running around but they were already gone when they tried to do something about them.
+      Someone probably spied upon you.
+    catched: >
+      Your spies shooed away some shady animals before they could spy upon you.
 disclaimer: >
   Currently there is a lot of testing and failing ongoing.
 

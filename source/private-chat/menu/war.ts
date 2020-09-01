@@ -7,6 +7,7 @@ import {armyFromBarracksUnits, calcBattle, remainingBarracksUnits, armyFromPlace
 import {BUILDINGS} from '../../lib/model/buildings'
 import {calculateBattleFatigue, calculatePlayerAttackImmunity, calculateLoot} from '../../lib/model/war'
 import {Context, Name, Session} from '../../lib/context'
+import {i18n} from '../../lib/i18n'
 import {MINUTE} from '../../lib/unix-time'
 import {PLAYER_BARRACKS_ARMY_TYPES, ZERO_BARRACKS_UNITS, calcUnitSum} from '../../lib/model/units'
 import {Resources, ZERO_RESOURCES} from '../../lib/model/resources'
@@ -191,6 +192,20 @@ async function handleSpies(telegram: Telegram, state: Spystate): Promise<void> {
 		} catch (error) {
 			console.error('send attacker spyreport failed', attackerId, error.message)
 			attacker.blocked = true
+		}
+	}
+
+	if (totalDefenderSpies > 0) { // && !target.blocked) {
+		const targetText = i18n.t(
+			target.__wikibase_language_code,
+			spySuperiority > 0 ? 'spy.gotSpied.assume' : 'spy.gotSpied.catched'
+		)
+
+		try {
+			await telegram.sendMessage(targetId, targetText)
+		} catch (error) {
+			console.error('send target got spied failed', targetId, error.message)
+			target.blocked = true
 		}
 	}
 }
