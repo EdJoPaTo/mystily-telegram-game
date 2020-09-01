@@ -185,6 +185,9 @@ async function handleSpies(telegram: Telegram, state: Spystate): Promise<void> {
 	text += EMOJI.espionage
 	text += ' '
 	text += buildingLine
+	if (targetBuildings.size === 0) {
+		text += '💀'
+	}
 
 	if (!attacker.blocked) {
 		try {
