@@ -14,6 +14,8 @@ import * as wdSets from './lib/wikidata-sets'
 import {bot as privateChatComposer} from './private-chat'
 import {bot as tribunalChatComposer, TRIBUNAL_CHAT} from './tribunal'
 
+process.title = 'mystily-tgbot'
+
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
 const token = readFileSync(tokenFilePath, 'utf8').trim()
 const bot = new Telegraf<Context>(token)
